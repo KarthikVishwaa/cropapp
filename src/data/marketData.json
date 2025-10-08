@@ -1,0 +1,37 @@
+[
+  {
+    "crop": "Rice",
+    "market": "Chennai",
+    "price": 2500,
+    "unit": "₹/quintal",
+    "date": "2025-10-08"
+  },
+  {
+    "crop": "Wheat",
+    "market": "Coimbatore",
+    "price": 2200,
+    "unit": "₹/quintal",
+    "date": "2025-10-08"
+  },
+  {
+    "crop": "Maize",
+    "market": "Madurai",
+    "price": 1800,
+    "unit": "₹/quintal",
+    "date": "2025-10-08"
+  },
+  {
+    "crop": "Cotton",
+    "market": "Tiruchirappalli",
+    "price": 3200,
+    "unit": "₹/quintal",
+    "date": "2025-10-08"
+  },
+  {
+    "crop": "Groundnut",
+    "market": "Salem",
+    "price": 3500,
+    "unit": "₹/quintal",
+    "date": "2025-10-08"
+  }
+]
