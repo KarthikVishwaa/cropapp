@@ -105,7 +105,7 @@ export default function DiseaseDetection() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-2xl shadow-lg">
+    <div className="max-w-4xl mx-auto p-11 bg-white rounded-2xl shadow-lg">
       <h2 className="text-3xl font-bold text-green-800 mb-6 text-center">
         Plant Disease Detection
       </h2>

@@ -99,7 +99,7 @@ export default function DigitalCropDiary() {
   }, {});
 
   return (
-    <div className="max-w-5xl mx-auto p-4 sm:p-6 bg-white rounded-2xl shadow-lg mt-6">
+    <div className="max-w-5xl mx-auto p-10 sm:p-6 bg-white rounded-2xl shadow-lg mt-3">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-3">
         <div className="flex items-center gap-2">

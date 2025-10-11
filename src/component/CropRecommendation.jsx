@@ -53,7 +53,7 @@ export default function CropRecommendation() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 bg-gradient-to-br from-green-50 to-white rounded-2xl shadow-lg">
+    <div className="max-w-5xl mx-auto p-6 bg-gradient-to-br from-green-50 to-white rounded-2xl shadow-lg py-12">
       <h2 className="text-3xl font-bold text-green-800 mb-6 text-center">
         Crop Recommendation
       </h2>

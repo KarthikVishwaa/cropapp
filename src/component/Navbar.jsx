@@ -3,194 +3,166 @@ import { NavLink, Link } from "react-router-dom";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isToolsOpen, setIsToolsOpen] = useState(false);
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-  const toggleTools = () => setIsToolsOpen(!isToolsOpen);
+  const mainLinks = [
+    { path: "/", name: "Home" },
+    { path: "/about", name: "About" },
+    { path: "/contact", name: "Contact" },
+  ];
 
-  const navLinkClass = ({ isActive }) =>
-    isActive
-      ? "text-green-700 font-semibold"
-      : "text-gray-700 hover:text-green-700 transition-colors duration-300";
+  const toolsLinks = [
+    { path: "/diary", name: "Digital Crop Diary" },
+    { path: "/schemes", name: "Government Schemes" },
+    { path: "/weather", name: "Weather Integration" },
+    { path: "/crop", name: "Crop Recommendation" },
+    { path: "/disease", name: "Pest Identification" },
+    { path: "/weed", name: "Weed Detection & Soil Health" },
+    { path: "/yield", name: "Yield Estimation Tool" },
+  ];
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50 font-poppins">
+    <nav className="bg-green-600 fixed w-full z-50 shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link to="/" className="text-2xl font-bold text-green-600">
-              Crop Sense
-            </Link>
-          </div>
+          <Link
+            to="/"
+            className="text-2xl font-bold text-white hover:text-green-200 transition-colors"
+          >
+            Crop Sense
+          </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex md:items-center space-x-6">
-            <NavLink to="/" className={navLinkClass}>
-              Home
-            </NavLink>
-            <NavLink to="/about" className={navLinkClass}>
-              About
-            </NavLink>
-            <NavLink to="/contact" className={navLinkClass}>
-              Contact
-            </NavLink>
+          <div className="hidden md:flex space-x-6">
+            {mainLinks.map((item, idx) => (
+              <NavLink
+                key={idx}
+                to={item.path}
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-white font-semibold border-b-2 border-white transition-all"
+                    : "text-white hover:text-green-200 transition-colors"
+                }
+              >
+                {item.name}
+              </NavLink>
+            ))}
 
             {/* Tools Dropdown */}
-            <div className="relative">
-              <button
-                onClick={toggleTools}
-                className="flex items-center text-gray-700 hover:text-green-700 font-medium transition-colors duration-300"
-              >
+            <div className="relative group">
+              <button className="text-white font-medium hover:text-green-200 transition-colors flex items-center">
                 Tools
-                <span className="ml-1 text-sm">{isToolsOpen ? "▲" : "▼"}</span>
+                <span className="ml-1 text-sm">▼</span>
               </button>
-
-              <div
-                className={`absolute bg-white shadow-lg mt-2 rounded-md w-56 overflow-hidden transition-all duration-300 transform origin-top ${
-                  isToolsOpen
-                    ? "scale-y-100 opacity-100"
-                    : "scale-y-0 opacity-0 pointer-events-none"
-                }`}
-              >
-                <NavLink
-                  to="/diary"
-                  className="block px-4 py-2 text-gray-700 hover:bg-green-100 transition-colors duration-200"
-                  onClick={() => setIsToolsOpen(false)}
-                >
-                  Digital Crop Diary
-                </NavLink>
-                <NavLink
-                  to="/schemes"
-                  className="block px-4 py-2 text-gray-700 hover:bg-green-100 transition-colors duration-200"
-                  onClick={() => setIsToolsOpen(false)}
-                >
-                  Government Schemes
-                </NavLink>
-                <NavLink
-                  to="/weather"
-                  className="block px-4 py-2 text-gray-700 hover:bg-green-100 transition-colors duration-200"
-                  onClick={() => setIsToolsOpen(false)}
-                >
-                  Weather Integration
-                </NavLink>
-                <NavLink
-                  to="/crop"
-                  className="block px-4 py-2 text-gray-700 hover:bg-green-100 transition-colors duration-200"
-                  onClick={() => setIsToolsOpen(false)}
-                >
-                  Crop Recommendation
-                </NavLink>
-                <NavLink
-                  to="/disease"
-                  className="block px-4 py-2 text-gray-700 hover:bg-green-100 transition-colors duration-200"
-                  onClick={() => setIsToolsOpen(false)}
-                >
-                  Pest Identification
-                </NavLink>
-                <NavLink
-                  to="/weed"
-                  className="block px-4 py-2 text-gray-700 hover:bg-green-100 transition-colors duration-200"
-                  onClick={() => setIsToolsOpen(false)}
-                >
-                  Weed Detection & Soil Health
-                </NavLink>
-                <NavLink
-                  to="/yield"
-                  className="block px-4 py-2 text-gray-700 hover:bg-green-100 transition-colors duration-200"
-                  onClick={() => setIsToolsOpen(false)}
-                >
-                  Yield Estimation Tool
-                </NavLink>
+              <div className="absolute left-0 mt-2 w-56 bg-green-700 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transform scale-y-0 group-hover:scale-y-100 origin-top transition-all duration-300">
+                {toolsLinks.map((tool, idx) => (
+                  <NavLink
+                    key={idx}
+                    to={tool.path}
+                    className="block px-4 py-2 text-white hover:bg-green-600 transition-colors duration-200"
+                  >
+                    {tool.name}
+                  </NavLink>
+                ))}
               </div>
             </div>
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex items-center md:hidden">
+          <div className="md:hidden">
             <button
-              onClick={toggleMenu}
-              className="text-gray-700 hover:text-green-700 focus:outline-none transition-colors duration-300"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="text-white hover:text-green-200[] focus:outline-none"
             >
-              <svg
-                className="h-6 w-6"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                {isMenuOpen ? (
+              {isMenuOpen ? (
+                <svg
+                  className="h-8 w-8"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
                     d="M6 18L18 6M6 6l12 12"
                   />
-                ) : (
+                </svg>
+              ) : (
+                <svg
+                  className="h-8 w-8"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
                     d="M4 6h16M4 12h16M4 18h16"
                   />
-                )}
-              </svg>
+                </svg>
+              )}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden bg-white shadow-md">
-          <NavLink to="/" className="block px-4 py-2" onClick={toggleMenu}>
-            Home
-          </NavLink>
-          <NavLink to="/about" className="block px-4 py-2" onClick={toggleMenu}>
-            About
-          </NavLink>
-          <NavLink to="/contact" className="block px-4 py-2" onClick={toggleMenu}>
-            Contact
-          </NavLink>
-
-          {/* Mobile Tools Dropdown */}
-          <div className="border-t border-gray-200">
-            <button
-              onClick={toggleTools}
-              className="w-full text-left px-4 py-2 font-medium text-gray-700 flex justify-between items-center transition-colors duration-300"
-            >
-              Tools
-              <span>{isToolsOpen ? "▲" : "▼"}</span>
-            </button>
-            <div
-              className={`pl-4 overflow-hidden transition-all duration-300 ${
-                isToolsOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-              }`}
-            >
-              <NavLink to="/diary" className="block px-4 py-2" onClick={toggleMenu}>
-                Digital Crop Diary
-              </NavLink>
-              <NavLink to="/schemes" className="block px-4 py-2" onClick={toggleMenu}>
-                Government Schemes
-              </NavLink>
-              <NavLink to="/weather" className="block px-4 py-2" onClick={toggleMenu}>
-                Weather Integration
-              </NavLink>
-              <NavLink to="/crop" className="block px-4 py-2" onClick={toggleMenu}>
-                Crop Recommendation
-              </NavLink>
-              <NavLink to="/disease" className="block px-4 py-2" onClick={toggleMenu}>
-                Pest Identification
-              </NavLink>
-              <NavLink to="/weed" className="block px-4 py-2" onClick={toggleMenu}>
-                Weed Detection & Soil Health
-              </NavLink>
-              <NavLink to="/yield" className="block px-4 py-2" onClick={toggleMenu}>
-                Yield Estimation Tool
-              </NavLink>
-            </div>
-          </div>
+      {/* Mobile Sliding Menu */}
+      <div
+        className={`fixed top-0 right-0 h-full w-64 bg-green-700 shadow-xl transform transition-transform duration-500 ease-in-out z-40 ${
+          isMenuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="flex justify-between items-center px-4 py-4 border-b border-green-500">
+          <span className="text-white font-bold text-lg">Menu</span>
+          <button
+            onClick={() => setIsMenuOpen(false)}
+            className="text-white hover:text-green-200"
+          >
+            ✕
+          </button>
         </div>
+
+        <div className="flex flex-col mt-4 space-y-2 px-4">
+          <p className="text-green-200 font-semibold uppercase text-sm mb-1 tracking-wider animate-pulse">
+            Main
+          </p>
+          {mainLinks.map((item, idx) => (
+            <NavLink
+              key={idx}
+              to={item.path}
+              className="text-white py-2 px-2 rounded hover:bg-green-600 transition-all duration-300 transform hover:translate-x-2"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {item.name}
+            </NavLink>
+          ))}
+
+          <p className="text-green-200 font-semibold uppercase text-sm mt-4 mb-1 tracking-wider animate-pulse">
+            Tools
+          </p>
+          {toolsLinks.map((item, idx) => (
+            <NavLink
+              key={idx}
+              to={item.path}
+              className="text-white py-2 px-2 rounded hover:bg-green-600 transition-all duration-300 transform hover:translate-x-2"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {item.name}
+            </NavLink>
+          ))}
+        </div>
+      </div>
+
+      {/* Background overlay */}
+      {isMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-30 z-30"
+          onClick={() => setIsMenuOpen(false)}
+        ></div>
       )}
     </nav>
   );

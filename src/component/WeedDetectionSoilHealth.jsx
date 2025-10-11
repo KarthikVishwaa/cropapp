@@ -58,7 +58,7 @@ export default function CropWeedSoilText() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded-2xl shadow-lg space-y-6">
+    <div className="max-w-3xl mx-auto p-11 bg-white rounded-2xl shadow-lg space-y-6">
       <h2 className="text-2xl font-bold text-green-800 mb-4 text-center">
         Crop & Soil AI Advisory
       </h2>

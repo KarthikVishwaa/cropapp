@@ -58,7 +58,7 @@ const WeatherWidget = () => {
     <div className="max-w-md mx-auto p-6 bg-gradient-to-br from-green-100 to-green-200 rounded-xl shadow-lg text-center transition-transform transform hover:scale-105">
       
       {/* Header with Back & Refresh */}
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 py-10 gap-2">
         <h2 className="text-xl font-semibold">
           {weather
             ? `Weather in ${weather.location.name}, ${weather.location.region}`
