@@ -1,4 +1,3 @@
-// src/components/Navbar.jsx
 import React, { useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 
@@ -46,17 +45,34 @@ const Navbar = () => {
                 Tools
                 <span className="ml-1 text-sm">{isToolsOpen ? "▲" : "▼"}</span>
               </button>
+
               <div
-                className={`absolute bg-white shadow-lg mt-2 rounded-md w-48 overflow-hidden transition-all duration-300 transform origin-top ${
-                  isToolsOpen ? "scale-y-100 opacity-100" : "scale-y-0 opacity-0 pointer-events-none"
+                className={`absolute bg-white shadow-lg mt-2 rounded-md w-56 overflow-hidden transition-all duration-300 transform origin-top ${
+                  isToolsOpen
+                    ? "scale-y-100 opacity-100"
+                    : "scale-y-0 opacity-0 pointer-events-none"
                 }`}
               >
+                <NavLink
+                  to="/diary"
+                  className="block px-4 py-2 text-gray-700 hover:bg-green-100 transition-colors duration-200"
+                  onClick={() => setIsToolsOpen(false)}
+                >
+                  Digital Crop Diary
+                </NavLink>
+                <NavLink
+                  to="/schemes"
+                  className="block px-4 py-2 text-gray-700 hover:bg-green-100 transition-colors duration-200"
+                  onClick={() => setIsToolsOpen(false)}
+                >
+                  Government Schemes
+                </NavLink>
                 <NavLink
                   to="/weather"
                   className="block px-4 py-2 text-gray-700 hover:bg-green-100 transition-colors duration-200"
                   onClick={() => setIsToolsOpen(false)}
                 >
-                  Weather Widget
+                  Weather Integration
                 </NavLink>
                 <NavLink
                   to="/crop"
@@ -70,28 +86,21 @@ const Navbar = () => {
                   className="block px-4 py-2 text-gray-700 hover:bg-green-100 transition-colors duration-200"
                   onClick={() => setIsToolsOpen(false)}
                 >
-                  Disease Detection
+                  Pest Identification
                 </NavLink>
                 <NavLink
-                  to="/market"
+                  to="/weed"
                   className="block px-4 py-2 text-gray-700 hover:bg-green-100 transition-colors duration-200"
                   onClick={() => setIsToolsOpen(false)}
                 >
-                  Market Prices
+                  Weed Detection & Soil Health
                 </NavLink>
                 <NavLink
-                  to="/chat"
+                  to="/yield"
                   className="block px-4 py-2 text-gray-700 hover:bg-green-100 transition-colors duration-200"
                   onClick={() => setIsToolsOpen(false)}
                 >
-                  Chat
-                </NavLink>
-                <NavLink
-                  to="/forum"
-                  className="block px-4 py-2 text-gray-700 hover:bg-green-100 transition-colors duration-200"
-                  onClick={() => setIsToolsOpen(false)}
-                >
-                  Forum
+                  Yield Estimation Tool
                 </NavLink>
               </div>
             </div>
@@ -158,23 +167,26 @@ const Navbar = () => {
                 isToolsOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
               }`}
             >
+              <NavLink to="/diary" className="block px-4 py-2" onClick={toggleMenu}>
+                Digital Crop Diary
+              </NavLink>
+              <NavLink to="/schemes" className="block px-4 py-2" onClick={toggleMenu}>
+                Government Schemes
+              </NavLink>
               <NavLink to="/weather" className="block px-4 py-2" onClick={toggleMenu}>
-                Weather Widget
+                Weather Integration
               </NavLink>
               <NavLink to="/crop" className="block px-4 py-2" onClick={toggleMenu}>
                 Crop Recommendation
               </NavLink>
               <NavLink to="/disease" className="block px-4 py-2" onClick={toggleMenu}>
-                Disease Detection
+                Pest Identification
               </NavLink>
-              <NavLink to="/market" className="block px-4 py-2" onClick={toggleMenu}>
-                Market Prices
+              <NavLink to="/weed" className="block px-4 py-2" onClick={toggleMenu}>
+                Weed Detection & Soil Health
               </NavLink>
-              <NavLink to="/chat" className="block px-4 py-2" onClick={toggleMenu}>
-                Chat
-              </NavLink>
-              <NavLink to="/forum" className="block px-4 py-2" onClick={toggleMenu}>
-                Forum
+              <NavLink to="/yield" className="block px-4 py-2" onClick={toggleMenu}>
+                Yield Estimation Tool
               </NavLink>
             </div>
           </div>

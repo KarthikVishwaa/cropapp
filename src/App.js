@@ -1,4 +1,3 @@
-// src/App.jsx
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -12,6 +11,11 @@ import DiseaseDetection from "./component/DiseaseDetection";
 import MarketPrices from "./component/MarketPrices";
 import Chat from "./component/Chat";
 import Forum from "./component/Forum";
+import GovernmentSchemes from "./component/GovernmentSchemes"; 
+import DigitalCropDiary from "./component/DigitalCropDiary";
+import WeedDetectionSoilHealth from "./component/WeedDetectionSoilHealth";
+import YieldEstimationTool from "./component/YieldEstimationTool";
+// ✅ Add this line
 
 function App() {
   return (
@@ -30,6 +34,12 @@ function App() {
             <Route path="/market" element={<MarketPrices />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/forum" element={<Forum />} />
+            <Route path="/schemes" element={<GovernmentSchemes />} />
+            <Route path="/diary" element={<DigitalCropDiary />} />
+<Route path="/schemes" element={<GovernmentSchemes />} />
+<Route path="/weed" element={<WeedDetectionSoilHealth />} />
+<Route path="/yield" element={<YieldEstimationTool />} />
+ {/* ✅ New route */}
           </Routes>
         </div>
       </div>

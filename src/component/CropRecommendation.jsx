@@ -1,28 +1,55 @@
 import React, { useState } from "react";
-import cropData from "../data/cropData.json";
+
+const OPENROUTER_API_KEY = "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";
 
 export default function CropRecommendation() {
   const [soil, setSoil] = useState("");
   const [season, setSeason] = useState("");
   const [rainfall, setRainfall] = useState("");
-  const [recommendations, setRecommendations] = useState([]);
+  const [recommendations, setRecommendations] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleRecommend = () => {
+  const handleRecommend = async () => {
     const validRainfall = parseInt(rainfall);
     if (!soil || !season || isNaN(validRainfall)) {
-      alert("Please select soil, season, and enter rainfall.");
+      alert("Please select soil, season, and enter valid rainfall.");
       return;
     }
 
-    const results = cropData.filter(
-      (c) =>
-        c.soil.includes(soil) &&
-        (c.season.includes(season) || c.season.includes("All seasons")) &&
-        validRainfall >= c.minRainfall &&
-        validRainfall <= c.maxRainfall
-    );
+    setLoading(true);
+    setRecommendations("");
 
-    setRecommendations(results);
+    try {
+      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-4.1-mini",
+          messages: [
+            {
+              role: "user",
+              content: `Suggest suitable crops for farming based on the following conditions:
+              - Soil type: ${soil}
+              - Season: ${season}
+              - Expected rainfall: ${validRainfall} mm
+              Provide 5-7 crop recommendations, and include a short reason for each. Keep it simple for farmers.`,
+            },
+          ],
+        }),
+      });
+
+      const data = await res.json();
+      const aiText = data?.choices?.[0]?.message?.content || "No recommendations available.";
+      setRecommendations(aiText);
+    } catch (err) {
+      console.error(err);
+      setRecommendations("Failed to fetch recommendations: " + err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -89,35 +116,19 @@ export default function CropRecommendation() {
         onClick={handleRecommend}
         className="w-full bg-green-600 text-white font-semibold py-2 rounded-md hover:bg-green-700 transition mb-6"
       >
-        Recommend Crops
+        {loading ? "Fetching Recommendations..." : "Recommend Crops"}
       </button>
 
       {/* Recommendations */}
-      {recommendations.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {recommendations.map((c, i) => (
-            <div
-              key={i}
-              className="bg-white p-4 rounded-2xl shadow-md border-l-4 border-green-500 hover:scale-105 transform transition"
-            >
-              <h3 className="text-xl font-semibold text-green-800 mb-2">{c.crop}</h3>
-              <p className="text-green-700 mb-1">
-                <span className="font-semibold">Soil:</span> {c.soil.join(", ")}
-              </p>
-              <p className="text-green-700 mb-1">
-                <span className="font-semibold">Season:</span> {c.season.join(", ")}
-              </p>
-              <p className="text-green-700">
-                <span className="font-semibold">Rainfall:</span> {c.minRainfall} - {c.maxRainfall} mm
-              </p>
-            </div>
-          ))}
+      {recommendations && (
+        <div className="bg-white p-4 rounded-2xl shadow-md border-l-4 border-green-500 text-green-700 whitespace-pre-line">
+          {recommendations}
         </div>
-      ) : (
+      )}
+
+      {!recommendations && !loading && (
         <p className="text-green-700 text-center">
-          {soil || season || rainfall
-            ? "No crops match your criteria."
-            : "Enter your details to get recommendations."}
+          Enter your details to get AI-based crop recommendations.
         </p>
       )}
     </div>
