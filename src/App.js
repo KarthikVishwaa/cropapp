@@ -15,6 +15,8 @@ import GovernmentSchemes from "./component/GovernmentSchemes";
 import DigitalCropDiary from "./component/DigitalCropDiary";
 import WeedDetectionSoilHealth from "./component/WeedDetectionSoilHealth";
 import YieldEstimationTool from "./component/YieldEstimationTool";
+import Mapnav from "./component/FarmLocationMapping"
+import FarmLocationMapping from "./component/FarmLocationMapping";
 // ✅ Add this line
 
 function App() {
@@ -36,6 +38,8 @@ function App() {
             <Route path="/forum" element={<Forum />} />
             <Route path="/schemes" element={<GovernmentSchemes />} />
             <Route path="/diary" element={<DigitalCropDiary />} />
+             <Route path="/map" element={<FarmLocationMapping/>} />
+
 <Route path="/schemes" element={<GovernmentSchemes />} />
 <Route path="/weed" element={<WeedDetectionSoilHealth />} />
 <Route path="/yield" element={<YieldEstimationTool />} />

@@ -8,6 +8,8 @@ import {
   Thermometer,
   Trash2,
   Search,
+  Info,
+  X,
 } from "lucide-react";
 
 export default function DigitalCropDiary() {
@@ -22,6 +24,7 @@ export default function DigitalCropDiary() {
   const [weather, setWeather] = useState(null);
   const [filterDate, setFilterDate] = useState("");
   const [search, setSearch] = useState("");
+  const [showInfo, setShowInfo] = useState(false); // Modal state
 
   // Fetch simple weather info
   useEffect(() => {
@@ -29,10 +32,10 @@ export default function DigitalCropDiary() {
       try {
         const { latitude, longitude } = pos.coords;
         const res = await fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m`
+          `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`
         );
         const data = await res.json();
-        setWeather(data.current);
+        setWeather(data.current_weather);
       } catch (err) {
         console.error("Weather fetch failed:", err);
       }
@@ -66,7 +69,7 @@ export default function DigitalCropDiary() {
       note,
       crop,
       image: preview,
-      weather: weather ? `${weather.temperature_2m}°C` : "Unavailable",
+      weather: weather ? `${weather.temperature}°C` : "Unavailable",
       date: new Date().toLocaleString(),
     };
 
@@ -99,7 +102,7 @@ export default function DigitalCropDiary() {
   }, {});
 
   return (
-    <div className="max-w-5xl mx-auto p-10 sm:p-6 bg-white rounded-2xl shadow-lg mt-3">
+    <div className="max-w-5xl mx-auto p-10 sm:p-6 bg-white rounded-2xl shadow-lg mt-3 relative">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-3">
         <div className="flex items-center gap-2">
@@ -108,6 +111,15 @@ export default function DigitalCropDiary() {
             Digital Crop Diary
           </h2>
         </div>
+
+        {/* Info Button */}
+        <button
+          onClick={() => setShowInfo(true)}
+          className="flex items-center gap-1 text-green-700 font-medium hover:text-green-800 transition"
+        >
+          <Info className="w-5 h-5" />
+          How to Use
+        </button>
 
         {/* Search Bar */}
         <div className="flex items-center border border-green-400 rounded-lg px-3 py-1 w-full sm:w-72">
@@ -121,6 +133,33 @@ export default function DigitalCropDiary() {
           />
         </div>
       </div>
+
+      {/* How to Use Modal */}
+      {showInfo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl relative">
+            <button
+              onClick={() => setShowInfo(false)}
+              className="absolute top-4 right-4 text-green-700 hover:text-green-900"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <h3 className="text-xl font-bold text-green-800 mb-4">
+              How to Use the Digital Crop Diary
+            </h3>
+            <ul className="list-disc list-inside text-green-700 space-y-2">
+              <li>Enter your note describing the action (e.g., applied fertilizer).</li>
+              <li>Select the crop type from the dropdown.</li>
+              <li>Optionally upload an image of your crop.</li>
+              <li>Click "Add Diary Entry" to save your note.</li>
+              <li>Use the search bar to quickly find entries by crop or note.</li>
+              <li>Filter entries by date using the calendar input.</li>
+              <li>View weather and crop statistics for quick insights.</li>
+              <li>Delete entries if necessary using the trash button.</li>
+            </ul>
+          </div>
+        </div>
+      )}
 
       {/* Entry Form */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-4">

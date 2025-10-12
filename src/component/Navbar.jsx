@@ -7,21 +7,21 @@ const Navbar = () => {
   const mainLinks = [
     { path: "/", name: "Home" },
     { path: "/about", name: "About" },
-    { path: "/contact", name: "Contact" },
   ];
 
   const toolsLinks = [
     { path: "/diary", name: "Digital Crop Diary" },
-    { path: "/schemes", name: "Government Schemes" },
-    { path: "/weather", name: "Weather Integration" },
+    { path: "/schemes", name: "Farm News" },
+    { path: "/weather", name: "Live Weather" },
     { path: "/crop", name: "Crop Recommendation" },
-    { path: "/disease", name: "Pest Identification" },
+    { path: "/disease", name: "Plant Disease Identification" },
     { path: "/weed", name: "Weed Detection & Soil Health" },
     { path: "/yield", name: "Yield Estimation Tool" },
+    { path: "/map", name: "Farm location Mapping" },
   ];
 
   return (
-    <nav className="bg-green-600 fixed w-full z-50 shadow-lg">
+    <nav className="bg-green-600 fixed w-full z-[9999] shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
@@ -54,7 +54,7 @@ const Navbar = () => {
                 Tools
                 <span className="ml-1 text-sm">▼</span>
               </button>
-              <div className="absolute left-0 mt-2 w-56 bg-green-700 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transform scale-y-0 group-hover:scale-y-100 origin-top transition-all duration-300">
+              <div className="absolute left-0 mt-2 w-56 bg-green-700 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transform scale-y-0 group-hover:scale-y-100 origin-top transition-all duration-300 z-[10000]">
                 {toolsLinks.map((tool, idx) => (
                   <NavLink
                     key={idx}
@@ -72,7 +72,7 @@ const Navbar = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-white hover:text-green-200[] focus:outline-none"
+              className="text-white hover:text-green-200 focus:outline-none"
             >
               {isMenuOpen ? (
                 <svg
@@ -112,7 +112,7 @@ const Navbar = () => {
 
       {/* Mobile Sliding Menu */}
       <div
-        className={`fixed top-0 right-0 h-full w-64 bg-green-700 shadow-xl transform transition-transform duration-500 ease-in-out z-40 ${
+        className={`fixed top-0 right-0 h-full w-64 bg-green-700 shadow-xl transform transition-transform duration-500 ease-in-out z-[9998] ${
           isMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -160,7 +160,7 @@ const Navbar = () => {
       {/* Background overlay */}
       {isMenuOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-30 z-30"
+          className="fixed inset-0 bg-black bg-opacity-30 z-[9997]"
           onClick={() => setIsMenuOpen(false)}
         ></div>
       )}
