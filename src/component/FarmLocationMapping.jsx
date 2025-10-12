@@ -12,8 +12,16 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Info, X } from "lucide-react";
 
+// Default pin icon
 const pinIcon = new L.Icon({
   iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+});
+
+// Live location pin (blue)
+const liveIcon = new L.Icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/64/64113.png",
   iconSize: [32, 32],
   iconAnchor: [16, 32],
 });
@@ -21,7 +29,7 @@ const pinIcon = new L.Icon({
 function MapClickHandler({ addPin }) {
   useMapEvents({
     click(e) {
-      addPin(e.latlng);
+      addPin({ lat: e.latlng.lat, lng: e.latlng.lng });
     },
   });
   return null;
@@ -43,34 +51,46 @@ export default function FarmLocationMapping() {
   const [farmName, setFarmName] = useState("");
   const [copiedCoord, setCopiedCoord] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [showInfo, setShowInfo] = useState(false); // Info modal state
+  const [showInfo, setShowInfo] = useState(false);
+  const [locationMode, setLocationMode] = useState("auto"); // auto or manual
+  const [manualLat, setManualLat] = useState("");
+  const [manualLng, setManualLng] = useState("");
+  const [manualName, setManualName] = useState("");
+  const [liveLocation, setLiveLocation] = useState(null);
   const mapRef = useRef(null);
 
-  // Load farms + GPS
+  // Load saved farms and detect live location
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("farmPolygons")) || [];
     setSavedFarms(saved);
 
-    if ("geolocation" in navigator) {
+    if (locationMode === "auto" && "geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          setCenter([pos.coords.latitude, pos.coords.longitude]);
+          const coords = [pos.coords.latitude, pos.coords.longitude];
+          setCenter(coords);
+          setLiveLocation(coords);
           setIsLoading(false);
         },
         () => setIsLoading(false)
       );
-    } else setIsLoading(false);
-  }, []);
+    } else {
+      setIsLoading(false);
+    }
+  }, [locationMode]);
 
-  const addPin = (latlng) => {
+  const addPin = ({ lat, lng, name = "" }) => {
     if (pins.length >= 10) return alert("Maximum 10 pins allowed.");
-    setPins([...pins, latlng]);
+    setPins([...pins, { lat, lng, name }]);
   };
 
   const clearPins = () => {
     setPins([]);
     setEditingIndex(null);
     setFarmName("");
+    setManualLat("");
+    setManualLng("");
+    setManualName("");
   };
 
   const saveFarm = () => {
@@ -112,6 +132,17 @@ export default function FarmLocationMapping() {
     setTimeout(() => setCopiedCoord(null), 2000);
   };
 
+  const handleManualAdd = () => {
+    const lat = parseFloat(manualLat);
+    const lng = parseFloat(manualLng);
+    if (!manualName.trim()) return alert("Please enter a location name!");
+    if (isNaN(lat) || isNaN(lng)) return alert("Enter valid coordinates.");
+    addPin({ lat, lng, name: manualName });
+    setManualLat("");
+    setManualLng("");
+    setManualName("");
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-[400px] bg-gradient-to-br from-green-50 to-white rounded-xl shadow-inner mt-24">
@@ -122,48 +153,105 @@ export default function FarmLocationMapping() {
 
   return (
     <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg border border-green-100 mt-28 p-6 relative">
+      {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold text-green-800 text-center flex-1">
           Farm Location Mapping
         </h2>
-        {/* Info button */}
         <button
           onClick={() => setShowInfo(true)}
           className="flex items-center gap-1 text-green-700 font-medium hover:text-green-900 transition"
         >
-          <Info className="w-5 h-5" />
-          How to Use
+          <Info className="w-5 h-5" /> How to Use
         </button>
       </div>
 
       {/* Info Modal */}
-{/* Info Modal */}
-{showInfo && (
-  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-40">
-    <div className="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl relative z-[10000]">
-      <button
-        onClick={() => setShowInfo(false)}
-        className="absolute top-4 right-4 text-green-700 hover:text-green-900"
-      >
-        <X className="w-5 h-5" />
-      </button>
-      <h3 className="text-xl font-bold text-green-800 mb-4">
-        How to Use Farm Location Mapping
-      </h3>
-      <ul className="list-disc list-inside text-green-700 space-y-2">
-        <li>Click on the map to add pins marking your farm boundary.</li>
-        <li>You need at least 3 pins to define a farm polygon.</li>
-        <li>Enter a farm name before saving the farm.</li>
-        <li>Click "Save Farm" to store it locally.</li>
-        <li>Use "Edit" to modify a saved farm or "Delete" to remove it.</li>
-        <li>Click on a pin to view its coordinates and copy them.</li>
-        <li>Clear pins to start a new farm mapping.</li>
-      </ul>
-    </div>
-  </div>
-)}
+      {showInfo && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl relative z-[10000]">
+            <button
+              onClick={() => setShowInfo(false)}
+              className="absolute top-4 right-4 text-green-700 hover:text-green-900"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <h3 className="text-xl font-bold text-green-800 mb-4">
+              How to Use Farm Location Mapping
+            </h3>
+            <ul className="list-disc list-inside text-green-700 space-y-2">
+              <li>Click on the map to add pins marking your farm boundary.</li>
+              <li>You need at least 3 pins to define a farm polygon.</li>
+              <li>Enter a farm name before saving the farm.</li>
+              <li>Click "Save Farm" to store it locally.</li>
+              <li>Use "Edit" to modify a saved farm or "Delete" to remove it.</li>
+              <li>Click on a pin to view its coordinates and copy them.</li>
+              <li>Clear pins to start a new farm mapping.</li>
+              <li>Switch between automatic GPS and manual coordinate entry.</li>
+              <li>Manual mode requires a location name along with latitude/longitude.</li>
+            </ul>
+          </div>
+        </div>
+      )}
 
-      {/* Map container */}
+      {/* Location Mode Selector */}
+      <div className="flex gap-4 mb-4 items-center">
+        <label className="flex items-center gap-1 text-green-700 font-medium">
+          <input
+            type="radio"
+            name="locationMode"
+            value="auto"
+            checked={locationMode === "auto"}
+            onChange={() => setLocationMode("auto")}
+          />
+          Auto (GPS)
+        </label>
+        <label className="flex items-center gap-1 text-green-700 font-medium">
+          <input
+            type="radio"
+            name="locationMode"
+            value="manual"
+            checked={locationMode === "manual"}
+            onChange={() => setLocationMode("manual")}
+          />
+          Manual
+        </label>
+      </div>
+
+      {/* Manual Input */}
+      {locationMode === "manual" && (
+        <div className="flex flex-col sm:flex-row gap-2 mb-4">
+          <input
+            type="text"
+            placeholder="Location Name"
+            value={manualName}
+            onChange={(e) => setManualName(e.target.value)}
+            className="border border-green-300 rounded-lg px-3 py-2 w-full sm:w-1/3 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <input
+            type="number"
+            placeholder="Latitude"
+            value={manualLat}
+            onChange={(e) => setManualLat(e.target.value)}
+            className="border border-green-300 rounded-lg px-3 py-2 w-full sm:w-1/3 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <input
+            type="number"
+            placeholder="Longitude"
+            value={manualLng}
+            onChange={(e) => setManualLng(e.target.value)}
+            className="border border-green-300 rounded-lg px-3 py-2 w-full sm:w-1/3 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <button
+            onClick={handleManualAdd}
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+          >
+            Add
+          </button>
+        </div>
+      )}
+
+      {/* Map */}
       <div className="h-[400px] w-full rounded-xl overflow-hidden border border-green-200 mb-4">
         <MapContainer
           center={center}
@@ -176,20 +264,32 @@ export default function FarmLocationMapping() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
           />
-
           <MapClickHandler addPin={addPin} />
           <FlyToLocation center={center} />
 
-          {pins.map((pos, i) => (
-            <Marker key={i} position={pos} icon={pinIcon}>
+          {/* Live Location */}
+          {liveLocation && locationMode === "auto" && (
+            <Marker position={liveLocation} icon={liveIcon}>
+              <Popup>Your current location</Popup>
+            </Marker>
+          )}
+
+          {/* Pins */}
+          {pins.map((p, i) => (
+            <Marker key={i} position={[p.lat, p.lng]} icon={pinIcon}>
               <Popup>
                 <div className="text-sm">
+                  {p.name && (
+                    <p>
+                      <strong>Name:</strong> {p.name} <br />
+                    </p>
+                  )}
                   <p>
-                    <strong>Lat:</strong> {pos.lat.toFixed(6)} <br />
-                    <strong>Lng:</strong> {pos.lng.toFixed(6)}
+                    <strong>Lat:</strong> {p.lat.toFixed(6)} <br />
+                    <strong>Lng:</strong> {p.lng.toFixed(6)}
                   </p>
                   <button
-                    onClick={() => copyCoordinates(pos.lat, pos.lng)}
+                    onClick={() => copyCoordinates(p.lat, p.lng)}
                     className="mt-2 bg-green-600 text-white text-xs px-3 py-1 rounded hover:bg-green-700"
                   >
                     Copy
@@ -199,10 +299,10 @@ export default function FarmLocationMapping() {
             </Marker>
           ))}
 
-          {pins.length >= 3 && <Polygon positions={pins} color="green" opacity={0.6} />}
-
+          {/* Farm polygons */}
+          {pins.length >= 3 && <Polygon positions={pins.map(p => [p.lat,p.lng])} color="green" opacity={0.6} />}
           {savedFarms.map((farm) => (
-            <Polygon key={farm.id} positions={farm.coordinates} color="blue" opacity={0.4}>
+            <Polygon key={farm.id} positions={farm.coordinates.map(p => [p.lat,p.lng])} color="blue" opacity={0.4}>
               <Popup>{farm.name}</Popup>
             </Polygon>
           ))}
@@ -231,20 +331,6 @@ export default function FarmLocationMapping() {
           Clear Pins
         </button>
       </div>
-
-      {/* Show Coordinates of Current Pins */}
-      {pins.length > 0 && (
-        <div className="bg-green-50 p-4 rounded-xl mb-6 border border-green-200">
-          <h3 className="text-lg font-semibold text-green-800 mb-2">Pinned Coordinates</h3>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {pins.map((p, i) => (
-              <li key={i} className="text-green-700 text-sm bg-white p-2 rounded-lg">
-                📍 <strong>{i + 1}:</strong> {p.lat.toFixed(6)}, {p.lng.toFixed(6)}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
 
       {/* Saved Farms */}
       {savedFarms.length > 0 && (
