@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Newspaper, Search, Globe, Clock, Loader2 } from "lucide-react";
 
 export default function DailyFarmingNews() {
@@ -13,10 +13,13 @@ export default function DailyFarmingNews() {
   useEffect(() => {
     const fetchNews = async () => {
       try {
+        setLoading(true);
+        setError(null);
+
         const res = await fetch(API_URL);
         const data = await res.json();
 
-        if (data.articles && Array.isArray(data.articles)) {
+        if (Array.isArray(data.articles)) {
           setNews(
             data.articles.map((n) => ({
               title: n.title,
@@ -24,7 +27,7 @@ export default function DailyFarmingNews() {
               url: n.url,
               image: n.urlToImage || null,
               publishedAt: n.publishedAt,
-              source: { name: n.source.name },
+              source: { name: n.source?.name || "Unknown" }
             }))
           );
         } else {
@@ -40,7 +43,7 @@ export default function DailyFarmingNews() {
     };
 
     fetchNews();
-  }, []);
+  }, [API_URL]); // ✅ ESLint satisfied
 
   const filteredNews = news.filter((n) =>
     n.title.toLowerCase().includes(search.toLowerCase())
@@ -56,6 +59,7 @@ export default function DailyFarmingNews() {
             Daily Farming News
           </h2>
         </div>
+
         <div className="flex items-center border border-green-400 rounded-lg px-3 py-1 w-full sm:w-72">
           <Search className="text-green-600 w-4 h-4 mr-2" />
           <input
@@ -75,7 +79,9 @@ export default function DailyFarmingNews() {
         </div>
       )}
 
-      {error && <p className="text-center text-red-600 mb-4">{error}</p>}
+      {error && (
+        <p className="text-center text-red-600 mb-4">{error}</p>
+      )}
 
       {/* News Grid */}
       {!loading && filteredNews.length > 0 ? (
@@ -92,10 +98,12 @@ export default function DailyFarmingNews() {
                   className="w-full h-44 object-cover"
                 />
               )}
+
               <div className="p-4 flex flex-col flex-grow">
                 <h3 className="text-lg font-semibold text-green-800 mb-2 line-clamp-2">
                   {a.title}
                 </h3>
+
                 <p className="text-sm text-gray-700 mb-3 line-clamp-3">
                   {a.description}
                 </p>
@@ -107,13 +115,15 @@ export default function DailyFarmingNews() {
                       ? new Date(a.publishedAt).toLocaleDateString()
                       : "-"}
                   </div>
+
                   <a
                     href={a.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1 text-green-600 hover:text-green-800 font-medium"
                   >
-                    <Globe className="w-4 h-4" /> Read
+                    <Globe className="w-4 h-4" />
+                    Read
                   </a>
                 </div>
               </div>
