@@ -1,0 +1,62 @@
+[
+  {
+    "crop": "Rice",
+    "totalDays": 120,
+    "stages": [
+      {
+        "name": "Sowing",
+        "startDay": 0,
+        "endDay": 7,
+        "advice": "Prepare nursery beds and maintain moisture."
+      },
+      {
+        "name": "Vegetative",
+        "startDay": 8,
+        "endDay": 45,
+        "advice": "Apply nitrogen fertilizer and irrigate every 7 days."
+      },
+      {
+        "name": "Flowering",
+        "startDay": 46,
+        "endDay": 75,
+        "advice": "Avoid water stress; monitor pests closely."
+      },
+      {
+        "name": "Maturity",
+        "startDay": 76,
+        "endDay": 120,
+        "advice": "Reduce irrigation and prepare for harvest."
+      }
+    ]
+  },
+  {
+    "crop": "Wheat",
+    "totalDays": 110,
+    "stages": [
+      {
+        "name": "Sowing",
+        "startDay": 0,
+        "endDay": 10,
+        "advice": "Sow seeds at proper depth with basal fertilizer."
+      },
+      {
+        "name": "Tillering",
+        "startDay": 11,
+        "endDay": 40,
+        "advice": "First irrigation and nitrogen application."
+      },
+      {
+        "name": "Heading",
+        "startDay": 41,
+        "endDay": 80,
+        "advice": "Monitor for rust disease and ensure irrigation."
+      },
+      {
+        "name": "Ripening",
+        "startDay": 81,
+        "endDay": 110,
+        "advice": "Stop irrigation; prepare harvesting equipment."
+      }
+    ]
+  }
+]
