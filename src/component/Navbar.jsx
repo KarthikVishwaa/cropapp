@@ -1,171 +1,84 @@
-import React, { useState } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { useState } from "react";
+import { NavLink } from "react-router-dom";
 
-const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const navLinks = [
+  { path: "/", name: "Home" },
+  { path: "/about", name: "About" },
+  { path: "/diary", name: "Digital Crop Diary" },
+  { path: "/schemes", name: "Farm News" },
+  { path: "/weather", name: "Live Weather" },
+  { path: "/crop", name: "Crop Recommendation" },
+  { path: "/disease", name: "Plant Disease Identification" },
+  { path: "/weed", name: "Weed Detection & Soil Health" },
+  { path: "/yield", name: "Yield Estimation Tool" },
+  { path: "/map", name: "Farm Location Mapping" },
+];
 
-  const mainLinks = [
-    { path: "/", name: "Home" },
-    { path: "/about", name: "About" },
-  ];
-
-  const toolsLinks = [
-    { path: "/diary", name: "Digital Crop Diary" },
-    { path: "/schemes", name: "Farm News" },
-    { path: "/weather", name: "Live Weather" },
-    { path: "/crop", name: "Crop Recommendation" },
-    { path: "/disease", name: "Plant Disease Identification" },
-    { path: "/weed", name: "Weed Detection & Soil Health" },
-    { path: "/yield", name: "Yield Estimation Tool" },
-    { path: "/map", name: "Farm location Mapping" },
-  ];
+export default function MobileSlideUpMenu() {
+  const [open, setOpen] = useState(false);
 
   return (
-    <nav className="bg-green-600 fixed w-full z-[9999] shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          {/* Logo */}
-          <Link
-            to="/"
-            className="text-2xl font-bold text-white hover:text-green-200 transition-colors"
-          >
-            Crop Sense
-          </Link>
-
-          {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-6">
-            {mainLinks.map((item, idx) => (
-              <NavLink
-                key={idx}
-                to={item.path}
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-white font-semibold border-b-2 border-white transition-all"
-                    : "text-white hover:text-green-200 transition-colors"
-                }
-              >
-                {item.name}
-              </NavLink>
-            ))}
-
-            {/* Tools Dropdown */}
-            <div className="relative group">
-              <button className="text-white font-medium hover:text-green-200 transition-colors flex items-center">
-                Tools
-                <span className="ml-1 text-sm">▼</span>
-              </button>
-              <div className="absolute left-0 mt-2 w-56 bg-green-700 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transform scale-y-0 group-hover:scale-y-100 origin-top transition-all duration-300 z-[10000]">
-                {toolsLinks.map((tool, idx) => (
-                  <NavLink
-                    key={idx}
-                    to={tool.path}
-                    className="block px-4 py-2 text-white hover:bg-green-600 transition-colors duration-200"
-                  >
-                    {tool.name}
-                  </NavLink>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-white hover:text-green-200 focus:outline-none"
-            >
-              {isMenuOpen ? (
-                <svg
-                  className="h-8 w-8"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  className="h-8 w-8"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              )}
-            </button>
-          </div>
-        </div>
+    <>
+      {/* Bottom handle / trigger */}
+      <div className="fixed bottom-0 left-0 right-0 z-[9999] flex justify-center pb-2">
+        <button
+          onClick={() => setOpen(true)}
+          className="bg-green-600 text-white px-6 py-2 rounded-full shadow-lg active:scale-95 transition"
+        >
+          Menu
+        </button>
       </div>
 
-      {/* Mobile Sliding Menu */}
-      <div
-        className={`fixed top-0 right-0 h-full w-64 bg-green-700 shadow-xl transform transition-transform duration-500 ease-in-out z-[9998] ${
-          isMenuOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <div className="flex justify-between items-center px-4 py-4 border-b border-green-500">
-          <span className="text-white font-bold text-lg">Menu</span>
-          <button
-            onClick={() => setIsMenuOpen(false)}
-            className="text-white hover:text-green-200"
-          >
-            ✕
-          </button>
-        </div>
-
-        <div className="flex flex-col mt-4 space-y-2 px-4">
-          <p className="text-green-200 font-semibold uppercase text-sm mb-1 tracking-wider animate-pulse">
-            Main
-          </p>
-          {mainLinks.map((item, idx) => (
-            <NavLink
-              key={idx}
-              to={item.path}
-              className="text-white py-2 px-2 rounded hover:bg-green-600 transition-all duration-300 transform hover:translate-x-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {item.name}
-            </NavLink>
-          ))}
-
-          <p className="text-green-200 font-semibold uppercase text-sm mt-4 mb-1 tracking-wider animate-pulse">
-            Tools
-          </p>
-          {toolsLinks.map((item, idx) => (
-            <NavLink
-              key={idx}
-              to={item.path}
-              className="text-white py-2 px-2 rounded hover:bg-green-600 transition-all duration-300 transform hover:translate-x-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {item.name}
-            </NavLink>
-          ))}
-        </div>
-      </div>
-
-      {/* Background overlay */}
-      {isMenuOpen && (
+      {/* Overlay */}
+      {open && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-30 z-[9997]"
-          onClick={() => setIsMenuOpen(false)}
-        ></div>
+          className="fixed inset-0 bg-black/40 z-[9998]"
+          onClick={() => setOpen(false)}
+        />
       )}
-    </nav>
-  );
-};
 
-export default Navbar;
+      {/* Slide-up panel */}
+      <div
+        className={`fixed bottom-0 left-0 right-0 z-[9999] bg-white rounded-t-3xl shadow-2xl transform transition-transform duration-500 ease-out
+        ${open ? "translate-y-0" : "translate-y-full"}`}
+        style={{ height: "85vh" }}
+      >
+        {/* Handle bar */}
+        <div className="flex justify-center py-3">
+          <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
+        </div>
+
+        {/* Header */}
+        <div className="px-5 pb-3 border-b">
+          <h2 className="text-lg font-bold text-green-700">
+            Crop Sense Menu
+          </h2>
+          <p className="text-sm text-gray-500">
+            Access all features
+          </p>
+        </div>
+
+        {/* Nav links */}
+        <div className="px-5 py-4 space-y-3 overflow-y-auto h-[calc(85vh-120px)]">
+          {navLinks.map((item, idx) => (
+            <NavLink
+              key={idx}
+              to={item.path}
+              onClick={() => setOpen(false)}
+              className={({ isActive }) =>
+                `block px-4 py-3 rounded-xl text-base font-medium transition
+                ${
+                  isActive
+                    ? "bg-green-600 text-white"
+                    : "bg-green-50 text-green-800 hover:bg-green-100"
+                }`
+              }
+            >
+              {item.name}
+            </NavLink>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
