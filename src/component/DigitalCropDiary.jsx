@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import {
   NotebookPen,
   ImagePlus,
-  Calendar,
   BarChart3,
   Leaf,
   Thermometer,
