@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 const WeatherWidget = () => {
   const [weather, setWeather] = useState(null);
@@ -9,10 +9,11 @@ const WeatherWidget = () => {
 
   const API_KEY = "67bde50eef39474d978184329252504";
 
-  const fetchWeather = async (location) => {
+  const fetchWeather = useCallback(async (location) => {
     setLoading(true);
     setError(null);
     setWeather(null);
+
     try {
       const url = `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${location}&aqi=no`;
       const response = await fetch(url);
@@ -24,14 +25,15 @@ const WeatherWidget = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [API_KEY]);
 
-  const fetchByGeo = () => {
+  const fetchByGeo = useCallback(() => {
     if (!navigator.geolocation) {
       setError("Geolocation not supported.");
       setLoading(false);
       return;
     }
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
@@ -42,11 +44,13 @@ const WeatherWidget = () => {
         setLoading(false);
       }
     );
-  };
+  }, [fetchWeather]);
 
   useEffect(() => {
-    if (!useManual) fetchByGeo();
-  }, [useManual]);
+    if (!useManual) {
+      fetchByGeo();
+    }
+  }, [useManual, fetchByGeo]); // ✅ ESLint satisfied
 
   const handleManualSubmit = (e) => {
     e.preventDefault();
@@ -55,90 +59,90 @@ const WeatherWidget = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-gradient-to-br from-green-100 to-green-200 rounded-xl shadow-lg text-center transition-transform transform hover:scale-105">
-      
-      {/* Header with Back & Refresh */}
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 py-10 gap-2">
+    <div className="max-w-md mx-auto p-6 bg-gradient-to-br from-green-100 to-green-200 rounded-xl shadow-lg text-center">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
         <h2 className="text-xl font-semibold">
           {weather
             ? `Weather in ${weather.location.name}, ${weather.location.region}`
             : "Weather Widget"}
         </h2>
-        <div className="flex gap-2 w-full sm:w-auto justify-center">
+
+        <div className="flex gap-2 w-full sm:w-auto">
           <button
             onClick={() => {
               setWeather(null);
               setError(null);
               setManualLocation("");
             }}
-            className="bg-red-500 text-white px-4 py-1 rounded-md hover:bg-red-600 transition w-full sm:w-auto"
+            className="bg-red-500 text-white px-4 py-1 rounded-md hover:bg-red-600"
           >
             Back
           </button>
+
           <button
             onClick={() => (useManual ? setUseManual(false) : fetchByGeo())}
-            className="bg-green-500 text-white px-4 py-1 rounded-md hover:bg-green-600 transition w-full sm:w-auto"
+            className="bg-green-500 text-white px-4 py-1 rounded-md hover:bg-green-600"
           >
             Refresh
           </button>
         </div>
       </div>
 
-      {/* Manual location input */}
+      {/* Manual toggle */}
       <div className="mb-4">
-        <label className="flex items-center justify-center space-x-2 cursor-pointer text-sm font-medium text-gray-700">
+        <label className="flex items-center justify-center gap-2 text-sm font-medium">
           <input
             type="checkbox"
             checked={useManual}
             onChange={() => setUseManual(!useManual)}
-            className="form-checkbox"
           />
-          <span>Enter location manually</span>
+          Enter location manually
         </label>
       </div>
 
       {useManual && (
-        <form onSubmit={handleManualSubmit} className="mb-4 flex flex-col sm:flex-row gap-2">
+        <form onSubmit={handleManualSubmit} className="mb-4 flex gap-2">
           <input
             type="text"
             placeholder="City or lat,lon"
             value={manualLocation}
             onChange={(e) => setManualLocation(e.target.value)}
-            className="flex-1 p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400"
+            className="flex-1 p-2 rounded-md border"
           />
           <button
             type="submit"
-            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition"
+            className="bg-green-500 text-white px-4 py-2 rounded-md"
           >
             Go
           </button>
         </form>
       )}
 
-      {/* Loading & Error */}
-      {loading && <p className="text-gray-700">Loading weather...</p>}
+      {/* Status */}
+      {loading && <p>Loading weather...</p>}
       {error && <p className="text-red-600">{error}</p>}
 
-      {/* Weather details */}
+      {/* Weather */}
       {weather && (
-        <div className="text-center">
+        <div>
           <img
             src={weather.current.condition.icon}
             alt={weather.current.condition.text}
             className="mx-auto w-20 h-20"
           />
-          <p className="text-3xl font-bold mt-2">{Math.round(weather.current.temp_c)}°C</p>
-          <p className="capitalize text-gray-700">{weather.current.condition.text}</p>
+          <p className="text-3xl font-bold">
+            {Math.round(weather.current.temp_c)}°C
+          </p>
+          <p className="capitalize">{weather.current.condition.text}</p>
 
-          <div className="text-sm text-gray-600 mt-2 text-left space-y-1">
+          <div className="text-sm text-gray-700 mt-2 space-y-1 text-left">
             <p>Feels Like: {Math.round(weather.current.feelslike_c)}°C</p>
             <p>Humidity: {weather.current.humidity}%</p>
-            <p>Wind: {weather.current.wind_kph} km/h ({weather.current.wind_dir})</p>
+            <p>Wind: {weather.current.wind_kph} km/h</p>
             <p>Pressure: {weather.current.pressure_mb} mb</p>
-            <p>Cloud Cover: {weather.current.cloud}%</p>
             <p>UV Index: {weather.current.uv}</p>
-            <p>Visibility: {weather.current.vis_km} km</p>
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="text-xs text-gray-500">
               Last Updated: {weather.current.last_updated}
             </p>
           </div>
