@@ -1,11 +1,10 @@
 import { useState } from "react";
 import {
   Leaf,
-  CloudRain,
-  CalendarDays,
   Sprout,
   AlertTriangle
 } from "lucide-react";
+
 
 const OPENROUTER_API_KEY =
   "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";
