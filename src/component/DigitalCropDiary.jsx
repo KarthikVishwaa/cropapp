@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   NotebookPen,
   ImagePlus,
@@ -9,7 +9,7 @@ import {
   Trash2,
   Search,
   Info,
-  X,
+  X
 } from "lucide-react";
 
 export default function DigitalCropDiary() {
@@ -19,14 +19,13 @@ export default function DigitalCropDiary() {
   });
   const [note, setNote] = useState("");
   const [crop, setCrop] = useState("");
-  const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [weather, setWeather] = useState(null);
   const [filterDate, setFilterDate] = useState("");
   const [search, setSearch] = useState("");
-  const [showInfo, setShowInfo] = useState(false); // Modal state
+  const [showInfo, setShowInfo] = useState(false);
 
-  // Fetch simple weather info
+  /* -------- Weather -------- */
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(async (pos) => {
       try {
@@ -42,27 +41,28 @@ export default function DigitalCropDiary() {
     });
   }, []);
 
-  // Save to local storage
+  /* -------- Persist diary -------- */
   useEffect(() => {
     localStorage.setItem("cropDiaryEntries", JSON.stringify(entries));
   }, [entries]);
 
-  // Handle image upload + preview
+  /* -------- Image preview -------- */
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setImage(file);
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setPreview(reader.result);
-      reader.readAsDataURL(file);
-    } else {
+    if (!file) {
       setPreview(null);
+      return;
     }
+    const reader = new FileReader();
+    reader.onloadend = () => setPreview(reader.result);
+    reader.readAsDataURL(file);
   };
 
   const addEntry = () => {
-    if (note.trim() === "" || !crop)
-      return alert("Please add a note and select a crop type!");
+    if (!note.trim() || !crop) {
+      alert("Please add a note and select a crop type!");
+      return;
+    }
 
     const newEntry = {
       id: Date.now(),
@@ -70,13 +70,12 @@ export default function DigitalCropDiary() {
       crop,
       image: preview,
       weather: weather ? `${weather.temperature}°C` : "Unavailable",
-      date: new Date().toLocaleString(),
+      date: new Date().toLocaleString()
     };
 
     setEntries([newEntry, ...entries]);
     setNote("");
     setCrop("");
-    setImage(null);
     setPreview(null);
   };
 
@@ -86,23 +85,23 @@ export default function DigitalCropDiary() {
     }
   };
 
-  // Apply filters: search and date
   const filteredEntries = entries.filter((entry) => {
     const matchSearch =
       entry.note.toLowerCase().includes(search.toLowerCase()) ||
       entry.crop.toLowerCase().includes(search.toLowerCase());
-    const matchDate = filterDate ? entry.date.startsWith(filterDate) : true;
+    const matchDate = filterDate
+      ? entry.date.startsWith(filterDate)
+      : true;
     return matchSearch && matchDate;
   });
 
-  // Crop stats summary
   const cropStats = entries.reduce((acc, e) => {
     acc[e.crop] = (acc[e.crop] || 0) + 1;
     return acc;
   }, {});
 
   return (
-    <div className="max-w-5xl mx-auto p-10 sm:p-6 bg-white rounded-2xl shadow-lg mt-3 relative">
+    <div className="max-w-5xl mx-auto p-10 sm:p-6 bg-white rounded-2xl shadow-lg mt-3">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-3">
         <div className="flex items-center gap-2">
@@ -112,16 +111,14 @@ export default function DigitalCropDiary() {
           </h2>
         </div>
 
-        {/* Info Button */}
         <button
           onClick={() => setShowInfo(true)}
-          className="flex items-center gap-1 text-green-700 font-medium hover:text-green-800 transition"
+          className="flex items-center gap-1 text-green-700 font-medium"
         >
           <Info className="w-5 h-5" />
           How to Use
         </button>
 
-        {/* Search Bar */}
         <div className="flex items-center border border-green-400 rounded-lg px-3 py-1 w-full sm:w-72">
           <Search className="text-green-600 w-4 h-4 mr-2" />
           <input
@@ -134,28 +131,24 @@ export default function DigitalCropDiary() {
         </div>
       </div>
 
-      {/* How to Use Modal */}
+      {/* Info Modal */}
       {showInfo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl relative">
+        <div className="fixed inset-0 z-50 bg-black/40 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-2xl max-w-lg w-full relative">
             <button
               onClick={() => setShowInfo(false)}
-              className="absolute top-4 right-4 text-green-700 hover:text-green-900"
+              className="absolute top-4 right-4 text-green-700"
             >
               <X className="w-5 h-5" />
             </button>
-            <h3 className="text-xl font-bold text-green-800 mb-4">
-              How to Use the Digital Crop Diary
+            <h3 className="text-xl font-bold text-green-800 mb-3">
+              How to Use
             </h3>
             <ul className="list-disc list-inside text-green-700 space-y-2">
-              <li>Enter your note describing the action (e.g., applied fertilizer).</li>
-              <li>Select the crop type from the dropdown.</li>
-              <li>Optionally upload an image of your crop.</li>
-              <li>Click "Add Diary Entry" to save your note.</li>
-              <li>Use the search bar to quickly find entries by crop or note.</li>
-              <li>Filter entries by date using the calendar input.</li>
-              <li>View weather and crop statistics for quick insights.</li>
-              <li>Delete entries if necessary using the trash button.</li>
+              <li>Add notes for daily farm activities</li>
+              <li>Select crop and upload optional image</li>
+              <li>Search and filter entries anytime</li>
+              <li>Diary is saved automatically</li>
             </ul>
           </div>
         </div>
@@ -168,13 +161,13 @@ export default function DigitalCropDiary() {
           placeholder="Note (e.g. Applied fertilizer)"
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          className="col-span-2 border border-green-400 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-600"
+          className="col-span-2 border border-green-400 rounded-lg px-4 py-2"
         />
 
         <select
           value={crop}
           onChange={(e) => setCrop(e.target.value)}
-          className="border border-green-400 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-600"
+          className="border border-green-400 rounded-lg px-4 py-2"
         >
           <option value="">Select Crop</option>
           <option>Wheat</option>
@@ -184,9 +177,9 @@ export default function DigitalCropDiary() {
           <option>Sugarcane</option>
         </select>
 
-        <label className="flex items-center gap-2 border border-green-400 rounded-lg px-3 py-2 cursor-pointer hover:bg-green-50 transition">
+        <label className="flex items-center gap-2 border border-green-400 rounded-lg px-3 py-2 cursor-pointer">
           <ImagePlus className="text-green-600 w-5 h-5" />
-          <span className="text-sm text-green-700">Upload Image</span>
+          Upload Image
           <input
             type="file"
             accept="image/*"
@@ -196,94 +189,69 @@ export default function DigitalCropDiary() {
         </label>
       </div>
 
-      {/* Image Preview */}
       {preview && (
-        <div className="flex justify-center mb-4">
-          <img
-            src={preview}
-            alt="Preview"
-            className="w-48 h-48 object-cover rounded-xl shadow-md border border-green-300"
-          />
-        </div>
+        <img
+          src={preview}
+          alt="Preview"
+          className="w-48 h-48 object-cover rounded-xl mb-4"
+        />
       )}
 
       <button
         onClick={addEntry}
-        className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition w-full sm:w-auto"
+        className="bg-green-600 text-white px-6 py-2 rounded-lg"
       >
         Add Diary Entry
       </button>
 
-      {/* Filters */}
-      <div className="mt-6 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-        <div className="flex items-center gap-2">
-          <Calendar className="text-green-700 w-5 h-5" />
-          <label className="text-green-700 font-medium">Filter by Date:</label>
-        </div>
-        <input
-          type="date"
-          value={filterDate}
-          onChange={(e) => setFilterDate(e.target.value)}
-          className="border border-green-400 rounded-lg px-3 py-1"
-        />
-        <button
-          onClick={() => setFilterDate("")}
-          className="text-sm text-green-700 hover:underline"
-        >
-          Clear
-        </button>
-      </div>
-
       {/* Stats */}
-      <div className="mt-6 bg-green-50 rounded-lg p-4">
+      <div className="mt-6 bg-green-50 p-4 rounded-lg">
         <div className="flex items-center gap-2 mb-2">
           <BarChart3 className="text-green-700 w-5 h-5" />
-          <h3 className="text-lg font-semibold text-green-800">Summary</h3>
+          <h3 className="font-semibold">Summary</h3>
         </div>
         <p>Total Entries: {entries.length}</p>
-        {Object.keys(cropStats).map((crop) => (
-          <p key={crop}>
-            {crop}: {cropStats[crop]} entries
-          </p>
+        {Object.keys(cropStats).map((c) => (
+          <p key={c}>{c}: {cropStats[c]}</p>
         ))}
       </div>
 
-      {/* Entries List */}
-      <div className="mt-8 space-y-4">
+      {/* Entries */}
+      <div className="mt-6 space-y-4">
         {filteredEntries.length === 0 ? (
           <p className="text-center text-green-700">No entries found.</p>
         ) : (
-          filteredEntries.map((entry) => (
+          filteredEntries.map((e) => (
             <div
-              key={entry.id}
-              className="bg-green-50 border border-green-200 rounded-lg p-4 shadow-sm"
+              key={e.id}
+              className="bg-green-50 border border-green-200 p-4 rounded-lg"
             >
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+              <div className="flex justify-between">
                 <div className="flex items-center gap-2">
-                  <Leaf className="text-green-700 w-5 h-5" />
-                  <p className="text-green-900 font-semibold">{entry.crop}</p>
+                  <Leaf className="w-5 h-5 text-green-700" />
+                  <strong>{e.crop}</strong>
                 </div>
-                <p className="text-sm text-green-600">{entry.date}</p>
+                <span className="text-sm text-green-600">{e.date}</span>
               </div>
 
-              <p className="mt-2 text-green-800">{entry.note}</p>
+              <p className="mt-2">{e.note}</p>
 
-              {entry.image && (
+              {e.image && (
                 <img
-                  src={entry.image}
+                  src={e.image}
                   alt="Crop"
-                  className="mt-3 w-full sm:w-64 h-40 object-cover rounded-lg border border-green-300"
+                  className="mt-2 w-64 h-40 object-cover rounded-lg"
                 />
               )}
 
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-3">
-                <div className="flex items-center gap-2 text-green-600 text-sm">
+              <div className="flex justify-between mt-3 text-sm text-green-600">
+                <div className="flex items-center gap-1">
                   <Thermometer className="w-4 h-4" />
-                  <span>Weather: {entry.weather}</span>
+                  {e.weather}
                 </div>
                 <button
-                  onClick={() => deleteEntry(entry.id)}
-                  className="mt-2 sm:mt-0 flex items-center gap-1 text-red-600 hover:text-red-700 text-sm font-medium"
+                  onClick={() => deleteEntry(e.id)}
+                  className="flex items-center gap-1 text-red-600"
                 >
                   <Trash2 className="w-4 h-4" />
                   Delete
