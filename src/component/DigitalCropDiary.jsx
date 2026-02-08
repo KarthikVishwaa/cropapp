@@ -20,7 +20,7 @@ export default function DigitalCropDiary() {
   const [crop, setCrop] = useState("");
   const [preview, setPreview] = useState(null);
   const [weather, setWeather] = useState(null);
-  const [filterDate, setFilterDate] = useState("");
+  const [filterDate] = useState("");
   const [search, setSearch] = useState("");
   const [showInfo, setShowInfo] = useState(false);
 
