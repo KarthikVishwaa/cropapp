@@ -1,21 +1,23 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const navLinks = [
-  { path: "/", name: "Home" },
-  { path: "/about", name: "About" },
-  { path: "/diary", name: "Digital Crop Diary" },
-  { path: "/schemes", name: "Farm News" },
-  { path: "/weather", name: "Live Weather" },
-  { path: "/crop", name: "Crop Recommendation" },
-  { path: "/disease", name: "Plant Disease Identification" },
-  { path: "/weed", name: "Weed Detection & Soil Health" },
-  { path: "/yield", name: "Yield Estimation Tool" },
-  { path: "/map", name: "Farm Location Mapping" },
+  { path: "/", key: "home" },
+  { path: "/about", key: "about" },
+  { path: "/diary", key: "digitalDiary" },
+  { path: "/schemes", key: "farmNews" },
+  { path: "/weather", key: "liveWeather" },
+  { path: "/crop", key: "cropRecommendation" },
+  { path: "/disease", key: "diseaseIdentification" },
+  { path: "/weed", key: "weedSoilHealth" },
+  { path: "/yield", key: "yieldTool" },
+  { path: "/map", key: "farmMapping" },
 ];
 
 export default function MobileSlideUpMenu() {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <>
@@ -23,9 +25,9 @@ export default function MobileSlideUpMenu() {
       <div className="fixed bottom-0 left-0 right-0 z-[9999] flex justify-center pb-2">
         <button
           onClick={() => setOpen(true)}
-          className="bg-green-600 text-white px-6 py-2 rounded-full shadow-lg active:scale-95 transition"
+          className="bg-green-600 text-white px-6 py-2 rounded-full shadow-lg active:scale-95 transition whitespace-nowrap"
         >
-          Menu
+          {t("menu")}
         </button>
       </div>
 
@@ -50,11 +52,12 @@ export default function MobileSlideUpMenu() {
 
         {/* Header */}
         <div className="px-5 pb-3 border-b">
-          <h2 className="text-lg font-bold text-green-700">
-            Crop Sense Menu
+          <h2 className="text-lg font-bold text-green-700 break-words">
+            {t("appMenuTitle")}
           </h2>
-          <p className="text-sm text-gray-500">
-            Access all features
+
+          <p className="text-sm text-gray-500 break-words">
+            {t("appMenuSubtitle")}
           </p>
         </div>
 
@@ -66,7 +69,7 @@ export default function MobileSlideUpMenu() {
               to={item.path}
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
-                `block px-4 py-3 rounded-xl text-base font-medium transition
+                `block px-4 py-3 rounded-xl text-base font-medium transition break-words
                 ${
                   isActive
                     ? "bg-green-600 text-white"
@@ -74,7 +77,10 @@ export default function MobileSlideUpMenu() {
                 }`
               }
             >
-              {item.name}
+              {/* Language-safe label */}
+              <span className="whitespace-normal">
+                {t(item.key)}
+              </span>
             </NavLink>
           ))}
         </div>

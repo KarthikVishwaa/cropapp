@@ -1,11 +1,16 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { CloudSun, Sprout, Leaf, MessageCircle, MapPin } from "lucide-react";
 
 export default function Home() {
+  const { t } = useTranslation();
+
   return (
     <div className="bg-gradient-to-b from-green-50 to-white min-h-screen">
+      
       {/* Hero Section */}
-      <section className="relative flex flex-col items-center justify-center text-center px-6 py-20 md:py-32 overflow-hidden">
+      <section className="relative flex flex-col items-center justify-center text-center px-4 sm:px-6 py-16 sm:py-20 md:py-28 overflow-hidden">
+        
         <div className="absolute inset-0 -z-10">
           <img
             src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6"
@@ -14,94 +19,107 @@ export default function Home() {
           />
         </div>
 
-        <h1 className="text-4xl md:text-6xl font-extrabold text-green-800 mb-6">
-          Empowering Farmers with AI & Data
+        {/* Responsive + Language Safe Title */}
+        <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-green-800 mb-4 leading-tight break-words">
+          {t("heroTitle")}
         </h1>
-        <p className="text-lg md:text-xl text-green-900 max-w-2xl mb-8">
-          CropSense.com helps farmers in Tamil Nadu make smarter decisions using
-          real-time weather, AI crop recommendations, and market insights — all
-          for free.
+
+        {/* Prevent overflow on long translations */}
+        <p className="text-base sm:text-lg md:text-xl text-green-900 max-w-2xl mb-6 leading-relaxed break-words">
+          {t("heroSubtitle")}
         </p>
+
         <a
           href="#features"
-          className="px-8 py-3 bg-green-600 text-white font-semibold rounded-full shadow-lg hover:bg-green-700 transition"
+          className="px-6 sm:px-8 py-2.5 sm:py-3 bg-green-600 text-white font-semibold rounded-full shadow-lg hover:bg-green-700 transition whitespace-nowrap"
         >
-          Explore Features
+          {t("exploreFeatures")}
         </a>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-16 px-6 bg-white">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-green-800 mb-12">
-          Smart Farming Features
+      <section id="features" className="py-12 sm:py-16 px-4 sm:px-6 bg-white">
+        
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-green-800 mb-8 sm:mb-12 break-words">
+          {t("featuresHeading")}
         </h2>
 
-        <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+        {/* Grid fully responsive */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-8 max-w-6xl mx-auto">
+          
           {[
             {
               icon: <CloudSun className="w-10 h-10 text-green-600" />,
-              title: "Live Weather Updates",
-              desc: "Get accurate, real-time forecasts to plan irrigation and harvesting efficiently using Open-Meteo API.",
+              title: t("weatherFeatureTitle"),
+              desc: t("weatherFeatureDesc"),
             },
             {
               icon: <Sprout className="w-10 h-10 text-green-600" />,
-              title: "Crop Recommendation",
-              desc: "AI-based suggestions for the best crops based on soil, season, and climate — all from open data.",
+              title: t("cropFeatureTitle"),
+              desc: t("cropFeatureDesc"),
             },
             {
               icon: <Leaf className="w-10 h-10 text-green-600" />,
-              title: "Disease Detection",
-              desc: "Upload crop images to instantly detect diseases using TensorFlow.js & open-source models.",
+              title: t("diseaseFeatureTitle"),
+              desc: t("diseaseFeatureDesc"),
             },
             {
               icon: <MapPin className="w-10 h-10 text-green-600" />,
-              title: "Nearby Market Prices",
-              desc: "Find the nearest mandis and compare live crop prices with data from Agmarknet.",
+              title: t("marketFeatureTitle"),
+              desc: t("marketFeatureDesc"),
             },
             {
               icon: <MessageCircle className="w-10 h-10 text-green-600" />,
-              title: "Community & Expert Chat",
-              desc: "Connect with other farmers and agri experts instantly using free Firebase-based forums.",
+              title: t("communityFeatureTitle"),
+              desc: t("communityFeatureDesc"),
             },
             {
               icon: <Sprout className="w-10 h-10 text-green-600" />,
-              title: "Fertilizer & Irrigation Tools",
-              desc: "Plan nutrient and water usage efficiently with built-in calculators for optimal yield.",
+              title: t("toolsFeatureTitle"),
+              desc: t("toolsFeatureDesc"),
             },
           ].map((f, i) => (
             <div
               key={i}
-              className="bg-green-50 rounded-2xl p-6 text-center shadow hover:shadow-lg transition"
+              className="bg-green-50 rounded-2xl p-4 sm:p-6 text-center shadow hover:shadow-lg transition"
             >
-              <div className="flex justify-center mb-4">{f.icon}</div>
-              <h3 className="text-xl font-semibold text-green-800 mb-2">
+              <div className="flex justify-center mb-3">{f.icon}</div>
+
+              {/* Prevent title overflow */}
+              <h3 className="text-lg sm:text-xl font-semibold text-green-800 mb-1 break-words">
                 {f.title}
               </h3>
-              <p className="text-green-700 text-sm">{f.desc}</p>
+
+              <p className="text-green-700 text-sm leading-relaxed break-words">
+                {f.desc}
+              </p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Call to Action */}
-      <section className="py-20 bg-gradient-to-r from-green-600 to-lime-600 text-center text-white">
-        <h2 className="text-3xl md:text-4xl font-bold mb-6">
-          Ready to Grow Smarter?
+      <section className="py-14 sm:py-20 px-4 bg-gradient-to-r from-green-600 to-lime-600 text-center text-white">
+        
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 break-words">
+          {t("ctaTitle")}
         </h2>
-        <p className="mb-8 text-lg">
-          Join the CropSense community and start using smart tools today.
+
+        <p className="mb-5 sm:mb-8 text-sm sm:text-lg break-words">
+          {t("ctaSubtitle")}
         </p>
+
         <a
           href="/signup"
-          className="bg-white text-green-700 px-8 py-3 rounded-full font-semibold shadow-lg hover:bg-green-100 transition"
+          className="bg-white text-green-700 px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold shadow-lg hover:bg-green-100 transition whitespace-nowrap"
         >
-          Get Started
+          {t("getStarted")}
         </a>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 bg-green-900 text-center text-green-100 text-sm">
-        © {new Date().getFullYear()} CropSense.com — Built for Farmers, by Farmers.
+      <footer className="py-6 sm:py-8 bg-green-900 text-center text-green-100 text-xs sm:text-sm break-words">
+        © {new Date().getFullYear()} CropSense — {t("footerTagline")}
       </footer>
     </div>
   );

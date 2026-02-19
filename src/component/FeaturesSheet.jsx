@@ -1,20 +1,29 @@
 import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const features = [
-  { path: "/diary", name: "Digital Crop Diary" },
-  { path: "/schemes", name: "Farm News & Schemes" },
-  { path: "/weather", name: "Live Weather" },
-  { path: "/crop", name: "Crop Recommendation" },
-  { path: "/disease", name: "Plant Disease Detection" },
-  { path: "/weed", name: "Weed & Soil Health" },
-  { path: "/yield", name: "Yield Estimation" },
-  { path: "/map", name: "Farm Location Mapping" },
- { path: "/calendar", name: "Crop Calendar & Alerts", isNew: true },
-{ path: "/ai-fertilizer", name: "AI Fertilizer Advisor", isNew: true }
+  { path: "/diary", key: "digitalDiary" },
+  { path: "/schemes", key: "farmNewsSchemes" },
+  { path: "/weather", key: "liveWeather" },
 
+  /* Smart tools grouping */
+  { path: "/market", key: "marketPrediction" },
+  { path: "/experts", key: "chatExpert" },      // ✅ FIXED
+  { path: "/irrigation", key: "irrigationCalculator" }, // ✅ FIXED
+
+  { path: "/crop", key: "cropRecommendation" },
+  { path: "/disease", key: "diseaseDetection" },
+  { path: "/weed", key: "weedSoilHealth" },
+  { path: "/yield", key: "yieldEstimation" },
+  { path: "/map", key: "farmMapping" },
+  { path: "/community", key: "Community Forum" },
+  { path: "/calendar", key: "cropCalendar", isNew: true },
+  { path: "/ai-fertilizer", key: "aiFertilizerAdvisor", isNew: true },
 ];
 
 export default function FeaturesSheet({ open, onClose }) {
+  const { t } = useTranslation();
+
   return (
     <>
       {/* Overlay */}
@@ -38,40 +47,46 @@ export default function FeaturesSheet({ open, onClose }) {
           <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
         </div>
 
+        {/* Header */}
         <div className="px-6 pt-4 pb-2 border-b">
-          <h2 className="text-lg font-semibold">All Features</h2>
-          <p className="text-sm text-gray-500">
-            Crop Sense tools
+          <h2 className="text-lg font-semibold break-words">
+            {t("allFeatures")}
+          </h2>
+
+          <p className="text-sm text-gray-500 break-words">
+            {t("featuresSubtitle")}
           </p>
         </div>
 
+        {/* Features List */}
         <div className="px-6 py-4 space-y-3 overflow-y-auto h-[calc(85vh-120px)]">
-   {features.map(item => (
-  <NavLink
-    key={item.path}
-    to={item.path}
-    onClick={onClose}
-    className={`flex items-center justify-between
-      px-4 py-3 rounded-2xl
-      font-medium transition
-      ${
-        item.isNew
-          ? "bg-green-100 border border-green-300"
-          : "bg-gray-100 hover:bg-gray-200"
-      }
-    `}
-  >
-    <span className="text-gray-800">{item.name}</span>
+          {features.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              onClick={onClose}
+              className={`flex items-center justify-between
+                px-4 py-3 rounded-2xl
+                font-medium transition break-words
+                ${
+                  item.isNew
+                    ? "bg-green-100 border border-green-300"
+                    : "bg-gray-100 hover:bg-gray-200"
+                }`}
+            >
+              <span className="text-gray-800 text-sm sm:text-base break-words">
+                {t(item.key)}
+              </span>
 
-    {item.isNew && (
-      <span className="text-xs font-semibold px-2 py-0.5
-        bg-green-600 text-white rounded-full">
-        NEW
-      </span>
-    )}
-  </NavLink>
-
-
+              {item.isNew && (
+                <span
+                  className="text-xs font-semibold px-2 py-0.5
+                  bg-green-600 text-white rounded-full whitespace-nowrap"
+                >
+                  {t("new")}
+                </span>
+              )}
+            </NavLink>
           ))}
         </div>
       </div>
