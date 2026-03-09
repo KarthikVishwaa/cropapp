@@ -6,20 +6,14 @@ import {
   Beaker
 } from "lucide-react";
 
-const PLANT_ID_API_KEY =
-  "KbwTOFU81lo6TEnJqjHcKNCYv3ESNbt29NzSxecOyOyzTRazFp";
-
-const OPENROUTER_API_KEY =
-  "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";
-
-const OPENROUTER_MODEL = "openai/gpt-4o-mini";
+const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_KEY;
+const OPENAI_MODEL = "gpt-4o-mini";
 
 export default function DiseaseDetection() {
   const [image, setImage] = useState(null);
   const [disease, setDisease] = useState(null);
   const [remedyData, setRemedyData] = useState(null);
   const [loadingDetect, setLoadingDetect] = useState(false);
-  const [loadingRemedy, setLoadingRemedy] = useState(false);
   const fileInputRef = useRef(null);
 
   /* ---------------- Image handlers ---------------- */
@@ -44,6 +38,17 @@ export default function DiseaseDetection() {
     setRemedyData(null);
   }
 
+  /* ---------------- Convert image to base64 ---------------- */
+
+  function toBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(",")[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
   /* ---------------- Main logic ---------------- */
 
   async function handleDetectDisease() {
@@ -55,54 +60,20 @@ export default function DiseaseDetection() {
     setLoadingDetect(true);
     resetResults();
 
-    let detectedDisease = "Unknown Disease";
-
     try {
-      const formData = new FormData();
-      formData.append("images", image);
-      formData.append("organs", "leaf");
+      const base64Image = await toBase64(image);
 
-      const res = await fetch(
-        "https://api.plant.id/v2/identify",
-        {
-          method: "POST",
-          headers: { "Api-Key": PLANT_ID_API_KEY },
-          body: formData
-        }
-      );
-
-      const data = await res.json();
-
-      detectedDisease =
-        data?.suggestions?.[0]?.plant_details?.disease?.name ||
-        data?.suggestions?.[0]?.plant_name ||
-        "Unknown Disease";
-
-      setDisease(detectedDisease);
-    } catch {
-      alert("Disease detection failed.");
-      setLoadingDetect(false);
-      return;
-    }
-
-    setLoadingDetect(false);
-
-    /* -------- Fetch remedies using OpenRouter -------- */
-
-    setLoadingRemedy(true);
-
-    const prompt = `
-You are an agricultural plant protection expert.
+      const prompt = `
+You are an expert agricultural plant pathologist.
 
 STRICT RULES:
 - Respond ONLY in valid JSON
 - No explanations outside JSON
 - Use simple words for farmers
 - Give safe, common remedies only
+- If no disease is visible, set disease to "Healthy Plant" and leave remedy fields as "Not needed"
 
-Disease name: ${detectedDisease}
-
-Return JSON exactly like this:
+Analyze this leaf image and return JSON exactly like this:
 {
   "disease": "",
   "symptoms": "",
@@ -112,39 +83,53 @@ Return JSON exactly like this:
 }
 `;
 
-    try {
-      const remedyRes = await fetch(
-        "https://openrouter.ai/api/v1/chat/completions",
+      const res = await fetch(
+        "https://api.openai.com/v1/chat/completions",
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+            Authorization: `Bearer ${OPENAI_API_KEY}`,
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            model: OPENROUTER_MODEL,
-            messages: [{ role: "user", content: prompt }],
+            model: "gpt-4o",
+            messages: [
+              {
+                role: "user",
+                content: [
+                  {
+                    type: "image_url",
+                    image_url: {
+                      url: `data:${image.type};base64,${base64Image}`
+                    }
+                  },
+                  {
+                    type: "text",
+                    text: prompt
+                  }
+                ]
+              }
+            ],
             temperature: 0.2
           })
         }
       );
 
-      const remedyJson = await remedyRes.json();
-      const content =
-        remedyJson?.choices?.[0]?.message?.content;
-
+      const data = await res.json();
+      const content = data?.choices?.[0]?.message?.content;
       const parsed = safeParseJSON(content);
 
       if (!parsed) {
         setRemedyData({ error: true });
       } else {
+        setDisease(parsed.disease);
         setRemedyData(parsed);
       }
     } catch {
       setRemedyData({ error: true });
     }
 
-    setLoadingRemedy(false);
+    setLoadingDetect(false);
   }
 
   /* ---------------- UI ---------------- */
@@ -186,15 +171,13 @@ Return JSON exactly like this:
 
       <button
         onClick={handleDetectDisease}
-        disabled={loadingDetect || loadingRemedy}
+        disabled={loadingDetect}
         className="w-full bg-green-600 text-white py-3 rounded-xl font-semibold"
       >
-        {loadingDetect || loadingRemedy
-          ? "Analyzing..."
-          : "Detect Disease"}
+        {loadingDetect ? "Analyzing..." : "Detect Disease"}
       </button>
 
-      {(loadingDetect || loadingRemedy) && (
+      {loadingDetect && (
         <div className="flex justify-center py-6">
           <div className="w-10 h-10 border-4 border-green-300 border-t-green-600 rounded-full animate-spin" />
         </div>
