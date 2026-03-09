@@ -5,11 +5,8 @@ import {
   AlertTriangle
 } from "lucide-react";
 
-
-const OPENROUTER_API_KEY =
-  "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";
-
-const OPENROUTER_MODEL = "openai/gpt-4o-mini";
+const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_KEY;
+const OPENAI_MODEL = "gpt-4o-mini";
 
 export default function CropRecommendation() {
   const [soil, setSoil] = useState("");
@@ -55,15 +52,15 @@ Return JSON exactly like this:
 
     try {
       const res = await fetch(
-        "https://openrouter.ai/api/v1/chat/completions",
+        "https://api.openai.com/v1/chat/completions",
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+            Authorization: `Bearer ${OPENAI_API_KEY}`,
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            model: OPENROUTER_MODEL,
+            model: OPENAI_MODEL,
             messages: [{ role: "user", content: prompt }],
             temperature: 0.3
           })
