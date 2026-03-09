@@ -9,7 +9,8 @@ const features = [
   /* Smart tools grouping */
   { path: "/market", key: "marketPrediction" },
   { path: "/experts", key: "chatExpert" },      // ✅ FIXED
-  { path: "/irrigation", key: "irrigationCalculator" }, // ✅ FIXED
+  { path: "/irrigation", key: "irrigationCalculator" },
+  // ✅ FIXED
 
   { path: "/crop", key: "cropRecommendation" },
   { path: "/disease", key: "diseaseDetection" },
@@ -17,6 +18,7 @@ const features = [
   { path: "/yield", key: "yieldEstimation" },
   { path: "/map", key: "farmMapping" },
   { path: "/community", key: "Community Forum" },
+  { path: "/price-forecast", key: "Price Forcast",isNew: true  }, 
   { path: "/calendar", key: "cropCalendar", isNew: true },
   { path: "/ai-fertilizer", key: "aiFertilizerAdvisor", isNew: true },
 ];

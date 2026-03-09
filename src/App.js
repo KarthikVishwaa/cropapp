@@ -10,7 +10,6 @@ import InstallAppBanner from "./component/InstallAppBanner";
 import WeatherWidget from "./component/WeatherWidget";
 import CropRecommendation from "./component/CropRecommendation";
 import DiseaseDetection from "./component/DiseaseDetection";
-import MarketPrices from "./component/MarketPrices";
 import Chat from "./component/Chat";
 import Forum from "./component/Forum";
 import GovernmentSchemes from "./component/GovernmentSchemes";
@@ -23,16 +22,16 @@ import CropCalendar from "./component/CropCalendar";
 import AIFertilizerAdvisor from "./component/AIFertilizerAdvisor";
 import MarketPricePrediction from "./component/MarketPricePrediction.jsx";
 import IrrigationCalculator from "./component/IrrigationCalculator.jsx";
-import ChatWithAgriExpert from "./component/ChatPage.jsx";
 import ExpertSelection from "./component/ExpertSelection.jsx";
 import ChatPage from "./component/ChatPage.jsx";
 import CommunityForum from "./component/CommunityForum.jsx";
+import PriceForecastingModule from "./component/PriceForcast.jsx";
 
 function App() {
   return (
     <Router>
 
-      {/* ✅ Language Switcher (Top Right) */}
+      {/* Language Switcher (Top Right) */}
       <div className="fixed top-4 right-4 z-[9999]">
         <LanguageSwitcher />
       </div>
@@ -44,24 +43,23 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/calendar" element={<CropCalendar />} />
           <Route path="/ai-fertilizer" element={<AIFertilizerAdvisor />} />
-<Route path="/market" element={<MarketPricePrediction />} />
-<Route path="/expert" element={<ChatWithAgriExpert />} />
-<Route path="/Irrigation" element={<IrrigationCalculator/>} />
+          <Route path="/market" element={<MarketPricePrediction />} />
+          <Route path="/expert" element={<ChatPage />} />
+          <Route path="/irrigation" element={<IrrigationCalculator />} />
           <Route path="/weather" element={<WeatherWidget />} />
           <Route path="/crop" element={<CropRecommendation />} />
           <Route path="/disease" element={<DiseaseDetection />} />
-          <Route path="/market" element={<MarketPrices />} />
           <Route path="/chat" element={<Chat />} />
-       <Route path="/experts" element={<ExpertSelection />} />
-<Route path="/chat/:profileId" element={<ChatPage />} />
-
-<Route path="/community" element={<CommunityForum/>} />
+          <Route path="/experts" element={<ExpertSelection />} />
+          <Route path="/chat/:profileId" element={<ChatPage />} />
+          <Route path="/community" element={<CommunityForum />} />
           <Route path="/forum" element={<Forum />} />
           <Route path="/schemes" element={<GovernmentSchemes />} />
           <Route path="/diary" element={<DigitalCropDiary />} />
           <Route path="/weed" element={<WeedDetectionSoilHealth />} />
           <Route path="/yield" element={<YieldEstimationTool />} />
           <Route path="/map" element={<FarmLocationMapping />} />
+          <Route path="/price-forecast" element={<PriceForecastingModule />} />
         </Routes>
 
         <InstallAppBanner />

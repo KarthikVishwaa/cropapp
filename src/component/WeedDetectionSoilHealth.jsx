@@ -1,25 +1,22 @@
 import React, { useState } from "react";
 
-const OPENROUTER_API_KEY = "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"; // Your OpenRouter key
+const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_KEY;
 
 export default function CropWeedSoilText() {
   const [cropType, setCropType] = useState("");
   const [soilType, setSoilType] = useState("");
+  const [language, setLanguage] = useState("English");
   const [aiAnalysis, setAiAnalysis] = useState("");
   const [loading, setLoading] = useState(false);
 
   const cropOptions = [
-    "Wheat",
-    "Rice",
-    "Corn",
-    "Soybean",
-    "Potato",
-    "Tomato",
-    "Cotton",
-    "Sugarcane",
+    "Wheat", "Rice", "Corn", "Soybean",
+    "Potato", "Tomato", "Cotton", "Sugarcane",
   ];
 
   const soilOptions = ["Sandy", "Loamy", "Clay", "Peaty", "Silty", "Chalky"];
+
+  const languageOptions = ["English", "Tamil", "Hindi"];
 
   const handleAnalyze = async () => {
     if (!cropType) return alert("Please select a crop type.");
@@ -29,18 +26,27 @@ export default function CropWeedSoilText() {
     setAiAnalysis("");
 
     try {
-      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      const res = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
         },
         body: JSON.stringify({
-          model: "gpt-4.1-mini",
+          model: "gpt-4o-mini",
           messages: [
             {
               role: "user",
-              content: `Provide detailed advice for growing ${cropType} on ${soilType} soil. Include suggestions for weed control, pest management, and soil health improvement. Keep it simple and actionable for farmers.`,
+              content: `You are an agricultural expert. Respond ONLY in ${language} language.
+              
+Provide detailed advice for growing ${cropType} on ${soilType} soil.
+Include suggestions for:
+- Weed control
+- Pest management
+- Soil health improvement
+
+Keep it simple and actionable for farmers.
+Respond completely in ${language} only.`,
             },
           ],
         }),
@@ -73,9 +79,7 @@ export default function CropWeedSoilText() {
         >
           <option value="">-- Select Crop --</option>
           {cropOptions.map((crop) => (
-            <option key={crop} value={crop}>
-              {crop}
-            </option>
+            <option key={crop} value={crop}>{crop}</option>
           ))}
         </select>
       </div>
@@ -90,11 +94,29 @@ export default function CropWeedSoilText() {
         >
           <option value="">-- Select Soil --</option>
           {soilOptions.map((soil) => (
-            <option key={soil} value={soil}>
-              {soil}
-            </option>
+            <option key={soil} value={soil}>{soil}</option>
           ))}
         </select>
+      </div>
+
+      {/* Language Selector */}
+      <div>
+        <label className="block mb-2 font-medium text-gray-700">Select Language:</label>
+        <div className="flex gap-3">
+          {languageOptions.map((lang) => (
+            <button
+              key={lang}
+              onClick={() => setLanguage(lang)}
+              className={`flex-1 py-2 rounded-lg font-medium border transition ${
+                language === lang
+                  ? "bg-green-600 text-white border-green-600"
+                  : "bg-white text-gray-700 border-gray-300 hover:border-green-500"
+              }`}
+            >
+              {lang === "English" ? "🇬🇧 English" : lang === "Tamil" ? "🇮🇳 Tamil" : "🇮🇳 Hindi"}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Analyze Button */}
@@ -109,10 +131,7 @@ export default function CropWeedSoilText() {
       {loading && (
         <div className="mt-4 flex flex-col gap-2 animate-pulse">
           {[1, 2, 3, 4].map((i) => (
-            <div
-              key={i}
-              className="h-4 bg-green-200 rounded w-full"
-            ></div>
+            <div key={i} className="h-4 bg-green-200 rounded w-full"></div>
           ))}
         </div>
       )}
@@ -120,6 +139,7 @@ export default function CropWeedSoilText() {
       {/* AI Analysis */}
       {aiAnalysis && !loading && (
         <div className="mt-4 p-4 bg-green-50 rounded-lg border border-green-200 text-green-700 whitespace-pre-line">
+          <p className="text-xs text-gray-400 mb-2">Response in {language}</p>
           {aiAnalysis}
         </div>
       )}
