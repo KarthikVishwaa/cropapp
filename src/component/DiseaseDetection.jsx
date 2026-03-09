@@ -7,7 +7,6 @@ import {
 } from "lucide-react";
 
 const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_KEY;
-const OPENAI_MODEL = "gpt-4o-mini";
 
 export default function DiseaseDetection() {
   const [image, setImage] = useState(null);
