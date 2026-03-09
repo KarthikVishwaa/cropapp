@@ -6,8 +6,6 @@ import {
   Calculator
 } from "lucide-react";
 
-import { OPENROUTER_API_KEY, OPENROUTER_MODEL } from "../config/openrouter";
-
 export default function AIFertilizerAdvisor() {
   const [crop, setCrop] = useState("");
   const [area, setArea] = useState(1);
@@ -58,11 +56,11 @@ Return JSON exactly in this format:
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+            Authorization: `Bearer ${process.env.REACT_APP_OPENAI_KEY}`,
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            model: OPENROUTER_MODEL,
+            model: process.env.REACT_APP_OPENROUTER_MODEL,
             messages: [{ role: "user", content: prompt }],
             temperature: 0.2
           })
@@ -87,7 +85,6 @@ Return JSON exactly in this format:
 
   return (
     <div className="p-4 max-w-xl mx-auto">
-      {/* Header */}
       <h1 className="text-2xl font-bold text-green-700 mb-2 flex items-center gap-2">
         <Leaf className="w-7 h-7" />
         AI Fertilizer Advisor
@@ -96,7 +93,6 @@ Return JSON exactly in this format:
         Exact fertilizer quantity for your field
       </p>
 
-      {/* Crop */}
       <Section title="Crop">
         <input
           value={crop}
@@ -106,7 +102,6 @@ Return JSON exactly in this format:
         />
       </Section>
 
-      {/* Land size */}
       <Section title="Land size (acre)">
         <div className="flex items-center gap-3">
           <Ruler className="text-green-600" />
@@ -121,7 +116,6 @@ Return JSON exactly in this format:
         </div>
       </Section>
 
-      {/* Crop age */}
       <Section title="Crop age (days)">
         <p className="text-center font-semibold mb-1">{day} days</p>
         <input
@@ -134,7 +128,6 @@ Return JSON exactly in this format:
         />
       </Section>
 
-      {/* Issue */}
       <Section title="Any problem seen?">
         <select
           value={issue}
@@ -159,7 +152,6 @@ Return JSON exactly in this format:
         )}
       </Section>
 
-      {/* Action */}
       <button
         onClick={getFertilizerAdvice}
         disabled={
@@ -175,7 +167,6 @@ Return JSON exactly in this format:
         {loading ? "Calculating..." : "Get Fertilizer Advice"}
       </button>
 
-      {/* Result */}
       {result && !result.error && (
         <div className="mt-6 space-y-4">
           {result.recommended_fertilizer.map((f, i) => (
@@ -203,7 +194,6 @@ Return JSON exactly in this format:
         </div>
       )}
 
-      {/* Error */}
       {result?.error && (
         <div className="mt-4 bg-red-50 border-l-4 border-red-500 p-4 rounded-xl">
           <p className="font-semibold">Unable to calculate</p>
@@ -220,14 +210,10 @@ Return JSON exactly in this format:
   );
 }
 
-/* ---------------- Helpers ---------------- */
-
 function Section({ title, children }) {
   return (
     <div className="mb-4">
-      <h2 className="font-semibold mb-2 text-gray-800">
-        {title}
-      </h2>
+      <h2 className="font-semibold mb-2 text-gray-800">{title}</h2>
       {children}
     </div>
   );
