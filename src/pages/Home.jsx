@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import AuthModal from "../component/AuthModal";
 import ProfileAvatar from "../component/ProfileAvatar";
 import LanguageSwitcher from "../component/LanguageSwitcher";
+import BottomPillNav from "../component/BottomPillNav";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -64,9 +65,10 @@ export default function Home() {
 
   return (
     <>
-      <div className="bg-gradient-to-b from-green-50 to-white min-h-screen">
+      {/* ── pb-28 so content doesn't hide behind bottom nav ── */}
+      <div className="bg-gradient-to-b from-green-50 to-white min-h-screen pb-28">
 
-        {/* ── TOP RIGHT: Language + Profile/SignIn ── */}
+        {/* ── TOP RIGHT ── */}
         <div className="fixed top-4 right-4 z-[9999] flex items-center gap-2">
           <LanguageSwitcher />
           {isAuthenticated ? (
@@ -90,16 +92,12 @@ export default function Home() {
               className="w-full h-full object-cover opacity-40"
             />
           </div>
-
           <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-green-800 mb-4 leading-tight break-words">
             {t("heroTitle")}
           </h1>
-
           <p className="text-base sm:text-lg md:text-xl text-green-900 max-w-2xl mb-6 leading-relaxed break-words">
             {t("heroSubtitle")}
           </p>
-
-          {/* Changed <a> to <button> to fix JSX parsing error */}
           <button
             onClick={() => {
               const el = document.getElementById("features");
@@ -116,19 +114,18 @@ export default function Home() {
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-green-800 mb-8 sm:mb-12 break-words">
             {t("featuresHeading")}
           </h2>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-8 max-w-6xl mx-auto">
             {features.map((f, i) => (
               <button
                 key={i}
                 onClick={() => goToFeature(f.path)}
-                className="bg-green-50 rounded-2xl p-4 sm:p-6 text-center shadow hover:shadow-lg transition cursor-pointer w-full border-0 text-left"
+                className="bg-green-50 rounded-2xl p-4 sm:p-6 text-center shadow hover:shadow-lg transition cursor-pointer w-full border-0"
               >
                 <div className="flex justify-center mb-3">{f.icon}</div>
-                <h3 className="text-lg sm:text-xl font-semibold text-green-800 mb-1 break-words text-center">
+                <h3 className="text-lg sm:text-xl font-semibold text-green-800 mb-1 break-words">
                   {f.title}
                 </h3>
-                <p className="text-green-700 text-sm leading-relaxed break-words text-center">
+                <p className="text-green-700 text-sm leading-relaxed break-words">
                   {f.desc}
                 </p>
               </button>
@@ -158,6 +155,9 @@ export default function Home() {
         </footer>
 
       </div>
+
+      {/* ── BOTTOM PILL NAV — always visible ── */}
+      <BottomPillNav />
 
       {/* ── AUTH MODAL ── */}
       {showModal && (

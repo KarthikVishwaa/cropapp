@@ -54,13 +54,12 @@ export default function App() {
     <AuthProvider>
       <Router>
         <Routes>
-
           {/* ── PUBLIC ── */}
           <Route path="/"       element={<Home />} />
           <Route path="/login"  element={<Login />} />
           <Route path="/signup" element={<Signup />} />
 
-          {/* ── PROTECTED FEATURES ── */}
+          {/* ── PROTECTED ── */}
           <Route path="/about"           element={<Shell><About /></Shell>} />
           <Route path="/contact"         element={<Shell><Contact /></Shell>} />
           <Route path="/weather"         element={<Shell><WeatherWidget /></Shell>} />
@@ -85,6 +84,10 @@ export default function App() {
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+
+        {/* ── Global BottomPillNav — shows on every page ── */}
+        <BottomPillNav />
+
       </Router>
     </AuthProvider>
   );
