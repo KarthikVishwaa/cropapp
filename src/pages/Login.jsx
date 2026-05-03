@@ -166,7 +166,6 @@ export default function Login() {
   return (
     <div style={{
       minHeight: "100vh",
-      minHeight: "100dvh",
       background: "linear-gradient(160deg, #052e16 0%, #0f2d1a 50%, #052e16 100%)",
       display: "flex",
       flexDirection: "column",
