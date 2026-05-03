@@ -1,14 +1,20 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  // Redirect to original destination after login, or home
+// Change the redirect fallback from "/home" to "/"
+const from = location.state?.from?.pathname || "/";
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,9 +28,8 @@ export default function Login() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Login failed");
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      navigate("/");
+      login(data.token, data.user);
+      navigate(from, { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -33,73 +38,117 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-950 via-green-900 to-emerald-800 relative overflow-hidden">
-      {/* Background decorative circles */}
-      <div className="absolute top-[-80px] left-[-80px] w-72 h-72 bg-green-700 opacity-20 rounded-full blur-3xl" />
-      <div className="absolute bottom-[-60px] right-[-60px] w-64 h-64 bg-emerald-400 opacity-10 rounded-full blur-2xl" />
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden"
+      style={{ background: "linear-gradient(135deg, #052e16 0%, #14532d 50%, #065f46 100%)" }}>
 
-      <div className="relative z-10 w-full max-w-md mx-4">
-        {/* Logo / Header */}
+      {/* Animated background blobs */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-96 h-96 rounded-full opacity-10"
+          style={{ background: "radial-gradient(circle, #4ade80, transparent)", filter: "blur(60px)" }} />
+        <div className="absolute bottom-[-10%] right-[-10%] w-80 h-80 rounded-full opacity-10"
+          style={{ background: "radial-gradient(circle, #34d399, transparent)", filter: "blur(60px)" }} />
+        {/* Subtle grain */}
+        <svg className="absolute inset-0 w-full h-full opacity-[0.03]">
+          <filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" /></filter>
+          <rect width="100%" height="100%" filter="url(#noise)" />
+        </svg>
+      </div>
+
+      <div className="relative z-10 w-full max-w-sm mx-4">
+        {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-green-400 bg-opacity-20 rounded-full border-2 border-green-400 border-opacity-40 mb-4">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-4"
+            style={{ background: "rgba(74,222,128,0.15)", border: "1.5px solid rgba(74,222,128,0.3)" }}>
             <span className="text-4xl">🌾</span>
           </div>
-          <h1 className="text-3xl font-bold text-white tracking-wide">FarmConnect</h1>
-          <p className="text-green-300 mt-1 text-sm">Sign in to your farming dashboard</p>
+          <h1 className="text-3xl font-black text-white" style={{ letterSpacing: "-0.5px" }}>
+            FarmConnect
+          </h1>
+          <p className="text-emerald-400 mt-1 text-xs font-medium tracking-widest uppercase">
+            Smart Agriculture Platform
+          </p>
         </div>
 
         {/* Card */}
-        <div className="bg-white bg-opacity-10 backdrop-blur-md border border-white border-opacity-20 rounded-3xl p-8 shadow-2xl">
-          <h2 className="text-xl font-semibold text-white mb-6 text-center">Welcome Back</h2>
+        <div className="rounded-3xl p-8 shadow-2xl"
+          style={{
+            background: "rgba(255,255,255,0.07)",
+            backdropFilter: "blur(20px)",
+            border: "1px solid rgba(255,255,255,0.12)",
+          }}>
+
+          <h2 className="text-lg font-bold text-white mb-1">Welcome back</h2>
+          <p className="text-emerald-300 text-xs mb-6">Sign in to access your farm dashboard</p>
 
           {error && (
-            <div className="bg-red-500 bg-opacity-20 border border-red-400 border-opacity-40 text-red-200 text-sm rounded-xl px-4 py-3 mb-5">
-              {error}
+            <div className="rounded-xl px-4 py-3 mb-5 text-sm flex items-center gap-2"
+              style={{ background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.3)", color: "#fca5a5" }}>
+              <span>⚠️</span> {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-green-200 text-sm mb-1.5 font-medium">Email Address</label>
+              <label className="block text-xs font-semibold mb-1.5 tracking-wide"
+                style={{ color: "#86efac" }}>EMAIL ADDRESS</label>
               <input
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                required
-                placeholder="you@example.com"
-                className="w-full bg-white bg-opacity-10 border border-white border-opacity-20 text-white placeholder-green-300 placeholder-opacity-60 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-400 focus:ring-1 focus:ring-green-400 transition"
+                type="email" name="email" value={form.email}
+                onChange={handleChange} required placeholder="you@example.com"
+                className="w-full rounded-xl px-4 py-3 text-sm text-white outline-none transition-all"
+                style={{
+                  background: "rgba(255,255,255,0.08)",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                  caretColor: "#4ade80",
+                }}
+                onFocus={e => e.target.style.border = "1px solid rgba(74,222,128,0.6)"}
+                onBlur={e => e.target.style.border = "1px solid rgba(255,255,255,0.15)"}
               />
             </div>
             <div>
-              <label className="block text-green-200 text-sm mb-1.5 font-medium">Password</label>
+              <label className="block text-xs font-semibold mb-1.5 tracking-wide"
+                style={{ color: "#86efac" }}>PASSWORD</label>
               <input
-                type="password"
-                name="password"
-                value={form.password}
-                onChange={handleChange}
-                required
-                placeholder="••••••••"
-                className="w-full bg-white bg-opacity-10 border border-white border-opacity-20 text-white placeholder-green-300 placeholder-opacity-60 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-400 focus:ring-1 focus:ring-green-400 transition"
+                type="password" name="password" value={form.password}
+                onChange={handleChange} required placeholder="••••••••"
+                className="w-full rounded-xl px-4 py-3 text-sm text-white outline-none transition-all"
+                style={{
+                  background: "rgba(255,255,255,0.08)",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                  caretColor: "#4ade80",
+                }}
+                onFocus={e => e.target.style.border = "1px solid rgba(74,222,128,0.6)"}
+                onBlur={e => e.target.style.border = "1px solid rgba(255,255,255,0.15)"}
               />
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-green-400 hover:bg-green-300 disabled:bg-green-700 text-green-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-200 mt-2 shadow-lg hover:shadow-green-400/30"
-            >
+            <button type="submit" disabled={loading}
+              className="w-full font-black py-3.5 rounded-xl text-sm transition-all duration-200 mt-2"
+              style={{
+                background: loading ? "rgba(74,222,128,0.4)" : "#4ade80",
+                color: "#052e16",
+                letterSpacing: "0.3px",
+              }}>
               {loading ? "Signing in..." : "Sign In →"}
             </button>
           </form>
 
-          <p className="text-center text-green-300 text-sm mt-6">
-            Don't have an account?{" "}
-            <Link to="/signup" className="text-green-400 font-semibold hover:underline">
-              Create one
+          <div className="flex items-center gap-3 my-5">
+            <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.1)" }} />
+            <span className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>OR</span>
+            <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.1)" }} />
+          </div>
+
+          <p className="text-center text-xs" style={{ color: "#86efac" }}>
+            New to FarmConnect?{" "}
+            <Link to="/signup" className="font-bold text-emerald-400 hover:text-emerald-300 transition-colors">
+              Create free account
             </Link>
           </p>
         </div>
+
+        <p className="text-center mt-6 text-xs" style={{ color: "rgba(255,255,255,0.2)" }}>
+          🔒 Your farm data is secure & private
+        </p>
       </div>
     </div>
   );
